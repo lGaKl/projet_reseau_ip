@@ -99,7 +99,7 @@ class IPSubnetApp(QMainWindow):
     # Charger le fichier QSS et appliquer le style à l'application
     def loadStyle(self):
         try: 
-            with open('projet/style.qss', 'r') as file:
+            with open('style.qss', 'r') as file:
                 style = file.read()
             self.setStyleSheet(style)
         except FileNotFoundError:
