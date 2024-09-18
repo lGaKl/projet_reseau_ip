@@ -30,7 +30,7 @@ class LoginDialog(QDialog):
         layout.addWidget(login_button)
 
         # btn pour se register
-        register_button = QPushButton('S''enregistrer')
+        register_button = QPushButton('S\'enregistrer')
         register_button.clicked.connect(self.open_register_dialog)
         layout.addWidget(register_button)
 

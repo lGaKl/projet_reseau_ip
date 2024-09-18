@@ -41,12 +41,12 @@ class RegisterDialog(QDialog):
 
         #Vérification des mdp 
         if password != confirm_password:
-            QMessageBox.warning(self, 'Erreur', 'les mots de passe ne sont pas les mêmes.')
+            QMessageBox.warning(self, 'Erreur', 'Les mots de passe ne sont pas les mêmes.')
             return
 
         # si les mdp sont ok -> affiche le message de confirmation
         if self.register_user(username, password):
-            QMessageBox.information(self, 'Parfait', 'utilisateurs enregistré correctement.')
+            QMessageBox.information(self, 'Parfait', 'L\'utilisateur a été enregistré correctement.')
             self.accept()
         else:
             QMessageBox.warning(self, 'Erreur', 'Enregistrement échoué.')
@@ -73,5 +73,5 @@ class RegisterDialog(QDialog):
             conn.close()
             return True #True si l'enregistrement est OK
         except Exception as e:
-            print(f"Erreur lors de l'enregistrement: {e}")
+            print(f"Erreur lors de l\'enregistrement: {e}")
             return False
