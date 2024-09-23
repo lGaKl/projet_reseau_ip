@@ -1,0 +1,98 @@
+/* style.qss */
+
+/* login.py */
+/************/
+
+#title_label {
+    color: black;
+    font-size: 48px;
+    font-style: 'Arial';
+    font-weight : bold;
+}
+
+#username_input {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#username_input:hover{
+    background-color : #C7C5B8;
+}
+
+#password_input {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#password_input:hover{
+    background-color : #C7C5B8;
+}
+
+#loginBtn {
+    font-style : 'Arial';
+    font-size: 34px;
+    background-color: #337AB7;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+}
+
+#loginBtn:hover{
+    background-color: #2E6DA4;
+}
+
+#registerBtn{
+    font-style : 'Arial';
+    font-size: 34px;
+    background-color: #b05457;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius:15px;
+}
+
+#registerBtn:hover{
+    background-color: #a43f3f;
+}
+
+
+/* gui_main.py*/
+/**************/
+
+#toolBarTop {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 5px;
+}
+
+#toolBarTop QToolButton {
+    background-color: #ffffff;
+    color: #333333; /* Couleur du texte */
+    font-size: 14px; /* Taille de la police */
+    border: 1px solid #d0d0d0; /* Bordure légère */
+    padding: 8px 12px; /* Ajout de padding */
+    border-radius: 4px; /* Coins arrondis */
+}
+
+#toolBarTop QToolButton:hover {
+    background-color: #e0e0e0; /* Couleur au survol */
+}
+
+#toolBarTop QToolButton:pressed {
+    background-color: #d0d0d0; /* Couleur lorsque le bouton est pressé */
+}
+
+#toolBarTop QToolButton:focus {
+    outline: none; /* Suppression de l'outline par défaut */
+}
+
+#toolBarTop QAction {
+    font-weight: normal; /* Texte normal pour les actions */
+}
