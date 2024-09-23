@@ -20,33 +20,43 @@ class GuiClassLess(QWidget):
         # Adresse IP
         self.ip_input = QLineEdit()
         self.ip_input.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
-        self.ip_input.setFont(QFont('Arial', 25))
+        self.ip_input.setObjectName("ip_input")
         self.ip_input.setFixedHeight(70)
 
         # Masque
         self.mask_input = QLineEdit()
         self.mask_input.setPlaceholderText("Entrer le masque (ex: 255.255.255.0 ou /24)")
-        self.mask_input.setFont(QFont('Arial', 25))
+        self.mask_input.setObjectName("mask_input")
         self.mask_input.setFixedHeight(70)
 
-        form_layout.addRow(QLabel('Adresse IP:'), self.ip_input)
-        form_layout.addRow(QLabel('Masque de sous-réseaux:'), self.mask_input)
+        # Labels pour Adresse IP et Masque avec objectName
+        self.ip_label = QLabel('Adresse IP:')
+        self.ip_label.setObjectName("ip_label")
+        
+        self.mask_label = QLabel('Masque de sous-réseaux:')
+        self.mask_label.setObjectName("mask_label")
+
+        # Ajout des champs de saisie et des labels au formulaire
+        form_layout.addRow(self.ip_label, self.ip_input)
+        form_layout.addRow(self.mask_label, self.mask_input)
 
         # Résultats
-        self.result_label = QLabel()
-        self.result_label.setFont(QFont('Arial', 25))
-        self.result_label.setObjectName('result_label')
-        form_layout.addRow(QLabel('Résultats:'), self.result_label)
+        self.result_label = QLabel('Résultats : ')
+        self.result_label.setObjectName("result_label")
+        self.res_label = QLabel()
+        form_layout.addRow(self.result_label, self.res_label)
 
         form_group.setLayout(form_layout)
         main_layout.addWidget(form_group)
 
         # Bouton "Changer de mode"
-        prev_button = QPushButton("Changer de mode")
-        prev_button.clicked.connect(self.show_classfull)
-        main_layout.addWidget(prev_button)
+        prevBtn = QPushButton("Changer de mode")
+        prevBtn.setObjectName("prevBtn")
+        prevBtn.clicked.connect(self.show_classfull)
+        main_layout.addWidget(prevBtn)
 
         calculateBtn = QPushButton("Calculer")
+        calculateBtn.clicked.connect(self.calculate)
         calculateBtn.clicked.connect(self.calculate)
         main_layout.addWidget(calculateBtn)
 

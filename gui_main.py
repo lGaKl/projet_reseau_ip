@@ -12,7 +12,7 @@ class GuiMain(QMainWindow):
         
     def initUI(self):
         self.setWindowTitle('Projet RéseauIP Groupe 9')
-        self.resize(800, 600)
+        self.resize(1000, 800)
         self.showMaximized()
 
         # Création du QStackedWidget pour gérer les différentes interfaces

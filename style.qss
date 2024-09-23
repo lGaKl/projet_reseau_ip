@@ -36,6 +36,7 @@
     background-color : #C7C5B8;
 }
 
+
 #loginBtn {
     font-style : 'Arial';
     font-size: 34px;
@@ -43,6 +44,7 @@
     color: #fff;
     border: 2px solid #C7C5B8;
     border-radius: 15px;
+    font-weight : bold;
 }
 
 #loginBtn:hover{
@@ -56,6 +58,7 @@
     color: #fff;
     border: 2px solid #C7C5B8;
     border-radius:15px;
+    font-weight : bold;
 }
 
 #registerBtn:hover{
@@ -73,26 +76,94 @@
 }
 
 #toolBarTop QToolButton {
-    background-color: #ffffff;
-    color: #333333; /* Couleur du texte */
-    font-size: 14px; /* Taille de la police */
-    border: 1px solid #d0d0d0; /* Bordure légère */
-    padding: 8px 12px; /* Ajout de padding */
-    border-radius: 4px; /* Coins arrondis */
+    background-color: #b05457;
+    color: white;
+    font-size: 14px;
+    border: 1px solid #d0d0d0;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight : bold;
 }
 
 #toolBarTop QToolButton:hover {
-    background-color: #e0e0e0; /* Couleur au survol */
+    background-color : #7d393c;
 }
 
 #toolBarTop QToolButton:pressed {
     background-color: #d0d0d0; /* Couleur lorsque le bouton est pressé */
 }
 
-#toolBarTop QToolButton:focus {
-    outline: none; /* Suppression de l'outline par défaut */
+/* gui_classfull.py et gui_classless.py */
+/**************/
+
+#ip_input {
+    font-size : 25px;
+    font-weight : bold;
+    font-style : 'Arial';
+    border : 2px solid #C7C5B8;
+    border-radius : 15px;
 }
 
-#toolBarTop QAction {
-    font-weight: normal; /* Texte normal pour les actions */
+#ip_input:hover {
+    background-color : #C7C5B8;
+}
+
+#mask_input {
+    font-size : 25px;
+    font-weight : bold;
+    font-style : 'Arial';
+    border : 2px solid #C7C5B8;
+    border-radius : 15px;
+}
+
+#mask_input:hover {
+    background-color : #C7C5B8;
+}
+
+#ip_label {
+    font-size : 25px;
+    font-weight : bold;
+    color : black;
+}
+
+#mask_label {
+    font-size : 25px;
+    font-weight : bold;
+    color : black;
+}
+
+#result_label {
+    font-size : 25px;
+    font-weight : bold;
+    color : black;
+}
+
+#prevBtn {
+    font-style : 'Arial';
+    font-size: 20px;
+    background-color: #337AB7;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+    min-height : 45px;
+    font-weight : bold;
+}
+
+#prevBtn:hover{
+    background-color: #2E6DA4;
+}
+
+#calculateBtn {
+    font-style : 'Arial';
+    font-size: 20px;
+    background-color: #b05457;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius:15px;
+    min-height : 45px;
+    font-weight : bold;
+}
+
+#calculateBtn:hover{
+    background-color: #a43f3f;
 }
