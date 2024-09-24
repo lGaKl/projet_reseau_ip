@@ -2,6 +2,7 @@
 # Classe pour l'interface du classless
 from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton
 from PyQt5.QtGui import QFont
+from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
 
 class GuiClassLess(QWidget):
     def __init__(self, main_window):
@@ -25,7 +26,7 @@ class GuiClassLess(QWidget):
 
         # Masque
         self.mask_input = QLineEdit()
-        self.mask_input.setPlaceholderText("Entrer le masque (ex: 255.255.255.0 ou /24)")
+        self.mask_input.setPlaceholderText("Entrer le masque (ex:/24)")
         self.mask_input.setObjectName("mask_input")
         self.mask_input.setFixedHeight(70)
 
@@ -56,6 +57,7 @@ class GuiClassLess(QWidget):
         main_layout.addWidget(prevBtn)
 
         calculateBtn = QPushButton("Calculer")
+        calculateBtn.setObjectName("calculateBtn")
         calculateBtn.clicked.connect(self.calculate)
         calculateBtn.clicked.connect(self.calculate)
         main_layout.addWidget(calculateBtn)
@@ -66,4 +68,18 @@ class GuiClassLess(QWidget):
         self.main_window.showClassFullWidget()
 
     def calculate(self):
-        print("on attend pour les calculs")
+        ip = self.ip_input.text()
+        mask = self.mask_input.text()
+
+        if not validate_ip(ip):
+            self.res_label.setText("Adresse IP invalide.")
+            return
+        
+        if not mask.startswith("/"):
+            self.res_label.setText("Le masque doit être en notation CIDR pour le mode ClassLess.")
+            return
+        elif not validate_mask(mask):
+            self.res_label.setText("Masque CIDR invalide.")
+            return
+        
+        self.res_label.setText(f"IP: {ip}, CIDR: {mask}")
