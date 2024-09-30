@@ -120,6 +120,30 @@
     background-color : #C7C5B8;
 }
 
+#subnet_count_input {
+    font-size : 25px;
+    font-weight : bold;
+    font-style : 'Arial';
+    border : 2px solid #C7C5B8;
+    border-radius : 15px;
+}
+
+#subnet_count_input:hover {
+    background-color : #C7C5B8;
+}
+
+#hosts_per_subnet_input {
+    font-size : 25px;
+    font-weight : bold;
+    font-style : 'Arial';
+    border : 2px solid #C7C5B8;
+    border-radius : 15px;
+}
+
+#hosts_per_subnet_input:hover {
+    background-color : #C7C5B8;
+}
+
 #ip_label {
     font-size : 25px;
     font-weight : bold;
@@ -127,6 +151,18 @@
 }
 
 #mask_label {
+    font-size : 25px;
+    font-weight : bold;
+    color : black;
+}
+
+#hosts_per_subnet_label {
+    font-size : 25px;
+    font-weight : bold;
+    color : black;
+}
+
+#subnet_count_label {
     font-size : 25px;
     font-weight : bold;
     color : black;

@@ -69,7 +69,7 @@ class LoginDialog(QDialog):
             QMessageBox.information(self, 'Parfait', 'Enregistrement réussi')
 
     def check_info(self, username, password):
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('D:/USB/ECOLE/BAC3/ReseauIP/projet_bis/users.db')
         cursor = conn.cursor()
 
         # sélectionne le mdp hashé pour ce user

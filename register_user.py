@@ -4,7 +4,7 @@ import sqlite3
 import bcrypt
 
 def register_user(username, password):
-    connector = sqlite3.connect('users.db')
+    connector = sqlite3.connect('D:/USB/ECOLE/BAC3/ReseauIP/projet_bis/users.db')
     cursor = connector.cursor()  # Correction ici
 
     # Vérifie si le user est déjà dans la db

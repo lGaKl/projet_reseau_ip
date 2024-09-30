@@ -9,7 +9,7 @@ from login import LoginDialog
 def main():
     app = QApplication(sys.argv)
 
-    with open('style.qss','r') as file : 
+    with open('D:/USB/ECOLE/BAC3/ReseauIP/projet_bis/style.qss', 'r') as file: 
         style_sheet = file.read()
         app.setStyleSheet(style_sheet)
     

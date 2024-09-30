@@ -3,7 +3,7 @@
 import sqlite3
 
 def view_users():
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('D:/USB/ECOLE/BAC3/ReseauIP/projet_bis/users.db')
     cursor = conn.cursor()
 
     # Récupérer tous les utilisateurs

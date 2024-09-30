@@ -1,6 +1,6 @@
 # gui_classless.py
 # Classe pour l'interface du classless
-from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton, QHBoxLayout, QApplication
 from PyQt5.QtGui import QFont
 from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
 
@@ -50,20 +50,44 @@ class GuiClassLess(QWidget):
         form_group.setLayout(form_layout)
         main_layout.addWidget(form_group)
 
+        # Layout pour les boutons
+        btn_group = QHBoxLayout()
+        
         # Bouton "Changer de mode"
         prevBtn = QPushButton("Changer de mode")
         prevBtn.setObjectName("prevBtn")
         prevBtn.clicked.connect(self.show_classfull)
-        main_layout.addWidget(prevBtn)
+        btn_group.addWidget(prevBtn)
 
+        # Bouton Calculer
         calculateBtn = QPushButton("Calculer")
         calculateBtn.setObjectName("calculateBtn")
         calculateBtn.clicked.connect(self.calculate)
-        calculateBtn.clicked.connect(self.calculate)
-        main_layout.addWidget(calculateBtn)
+        btn_group.addWidget(calculateBtn)
+
+        #Bouton pour reset le contenu des champs
+        resetBtn = QPushButton("Vider les champs")
+        resetBtn.setObjectName("resetBtn")
+        resetBtn.clicked.connect(self.reset_field)
+        btn_group.addWidget(resetBtn)
+
+        # Bouton pour quitter le programme
+        quitBtn = QPushButton("Quitter")
+        quitBtn.setObjectName("quitBtn")
+        quitBtn.clicked.connect(QApplication.quit)
+        btn_group.addWidget(quitBtn)
+
+
+        # Ajout du layout des boutons au layout principal
+        main_layout.addLayout(btn_group)
 
         self.setLayout(main_layout)
 
+    def reset_field(self):
+        self.ip_input.clear()
+        self.mask_input.clear()
+        self.res_label.clear()
+    
     def show_classfull(self):
         self.main_window.showClassFullWidget()
 

@@ -28,7 +28,7 @@ def mask_to_cidr(mask):
     try:
         # Créer un réseau fictif et en extraire la longueur du préfixe CIDR
         network = ipaddress.IPv4Network(f"0.0.0.0/{mask}", strict=False)
-        return f"/{network.prefixlen}"
+        return network.prefixlen  # Renvoie la longueur du préfixe CIDR comme un entier
     except ValueError:
         return None  # Retourner None si le masque est invalide
 

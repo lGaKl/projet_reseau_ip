@@ -5,7 +5,7 @@ import bcrypt
 
 #création de la db
 def create_db():
-    conn = sqlite3.connect('users.db')
+    conn = sqlite3.connect('D:/USB/ECOLE/BAC3/ReseauIP/projet_bis/users.db')
     #curseur permettant d'exécuter les commandes sql
     cursor = conn.cursor()
     
