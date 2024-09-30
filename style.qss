@@ -167,3 +167,33 @@
 #calculateBtn:hover{
     background-color: #a43f3f;
 }
+
+#quitBtn {
+    font-style : 'Arial';
+    font-size: 20px;
+    background-color: #257e32;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius:15px;
+    min-height : 45px;
+    font-weight : bold;
+}
+
+#quitBtn:hover{
+    background-color: #117620;
+}
+
+#resetBtn {
+    font-style : 'Arial';
+    font-size: 20px;
+    background-color: #ca8c22 ;
+    color: #fff;
+    border: 2px solid #C7C5B8;
+    border-radius:15px;
+    min-height : 45px;
+    font-weight : bold;
+}
+
+#resetBtn:hover{
+    background-color: #b88121;
+}

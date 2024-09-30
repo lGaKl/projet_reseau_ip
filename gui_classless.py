@@ -69,17 +69,45 @@ class GuiClassLess(QWidget):
 
     def calculate(self):
         ip = self.ip_input.text()
-        mask = self.mask_input.text()
+        cidr_mask = self.mask_input.text()
 
+        # Validation de l'adresse IP
         if not validate_ip(ip):
             self.res_label.setText("Adresse IP invalide.")
             return
-        
-        if not mask.startswith("/"):
-            self.res_label.setText("Le masque doit être en notation CIDR pour le mode ClassLess.")
+
+        # Validation du masque en notation CIDR
+        if not cidr_mask.startswith("/") or not validate_mask(cidr_mask):
+            self.res_label.setText("Le masque doit être en notation CIDR (ex: /24).")
             return
-        elif not validate_mask(mask):
-            self.res_label.setText("Masque CIDR invalide.")
-            return
-        
-        self.res_label.setText(f"IP: {ip}, CIDR: {mask}")
+
+        # Extraire la valeur CIDR (ex: /24 -> 24)
+        cidr_value = int(cidr_mask[1:])
+
+        # Convertir la notation CIDR en masque décimal
+        subnet_mask = cidr_to_mask(cidr_value)  # Par exemple, /24 devient 255.255.255.0
+
+        # Calculer l'adresse réseau et l'adresse de broadcast
+        network_address, broadcast_address = self.calculate_subnet(ip, subnet_mask)
+
+        # Affichage des résultats
+        self.res_label.setText(f"Adresse réseau : {network_address}\nAdresse de broadcast : {broadcast_address}")
+
+    # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
+    def calculate_subnet(self, ip, mask):
+        # Convertir IP et masque en binaire
+        ip_bin = ''.join([bin(int(x)+256)[3:] for x in ip.split('.')])
+        mask_bin = ''.join([bin(int(x)+256)[3:] for x in mask.split('.')])
+
+        # Calcul de l'adresse réseau (AND entre IP et masque)
+        network_bin = ''.join(['1' if ip_bin[i] == '1' and mask_bin[i] == '1' else '0' for i in range(32)])
+
+        # Calcul de l'adresse de broadcast (OR entre adresse réseau et inverse du masque)
+        broadcast_bin = ''.join([network_bin[i] if mask_bin[i] == '1' else '1' for i in range(32)])
+
+        # Conversion des adresses binaires en format décimal
+        network_address = '.'.join([str(int(network_bin[i:i+8], 2)) for i in range(0, 32, 8)])
+        broadcast_address = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
+
+        return network_address, broadcast_address
+

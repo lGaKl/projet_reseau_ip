@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QApplication
 from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
 
 class GuiClassFull(QWidget): 
@@ -46,19 +46,43 @@ class GuiClassFull(QWidget):
         form_group.setLayout(form_layout)
         main_layout.addWidget(form_group)
 
+        # Layout pour les boutons
+        btn_group = QHBoxLayout()
+        
         # Bouton "Changer de mode"
         prevBtn = QPushButton("Changer de mode")
         prevBtn.setObjectName("prevBtn")
         prevBtn.clicked.connect(self.show_classless)
-        main_layout.addWidget(prevBtn)
+        btn_group.addWidget(prevBtn)
 
         # Bouton Calculer
         calculateBtn = QPushButton("Calculer")
         calculateBtn.setObjectName("calculateBtn")
         calculateBtn.clicked.connect(self.calculate)
-        main_layout.addWidget(calculateBtn)
+        btn_group.addWidget(calculateBtn)
+
+        #Bouton pour reset le contenu des champs
+        resetBtn = QPushButton("Vider les champs")
+        resetBtn.setObjectName("resetBtn")
+        resetBtn.clicked.connect(self.reset_field)
+        btn_group.addWidget(resetBtn)
+
+        # Bouton pour quitter le programme
+        quitBtn = QPushButton("Quitter")
+        quitBtn.setObjectName("quitBtn")
+        quitBtn.clicked.connect(QApplication.quit)
+        btn_group.addWidget(quitBtn)
+
+
+        # Ajout du layout des boutons au layout principal
+        main_layout.addLayout(btn_group)
 
         self.setLayout(main_layout)
+
+    def reset_field(self):
+        self.ip_input.clear()
+        self.mask_input.clear()
+        self.res_label.clear()
 
     def show_classless(self):
         self.main_window.showClassLessWidget()
@@ -72,7 +96,7 @@ class GuiClassFull(QWidget):
             self.res_label.setText("Adresse IP invalide.")
             return
 
-        # Validation du masque
+        # Validation du masque (doit être en format décimal pour ClassFull)
         if mask.startswith("/"):
             self.res_label.setText("Le masque doit être en format décimal pour le mode ClassFull.")
             return
@@ -80,51 +104,71 @@ class GuiClassFull(QWidget):
             self.res_label.setText("Masque décimal invalide.")
             return
 
-        # Vérifier la classe de l'adresse IP
+        # Vérification de la classe IP à partir du premier octet
         first_octet = int(ip.split('.')[0])
-        
-        # Déterminer la classe de l'adresse IP et valider le masque
+
         if 1 <= first_octet <= 126:  # Classe A
             expected_mask = "255.0.0.0"
-            mask_class = "Classe A"
-            valid_subnets = [
-                "255.0.0.0", "255.128.0.0", "255.192.0.0", "255.224.0.0", "255.240.0.0",
-                "255.248.0.0", "255.252.0.0", "255.254.0.0", "255.255.0.0", "255.255.128.0",
-                "255.255.192.0", "255.255.224.0", "255.255.240.0", "255.255.248.0",
-                "255.255.252.0", "255.255.254.0", "255.255.255.0"
-            ]
-            if mask not in valid_subnets:
-                self.res_label.setText("Masque invalide pour une adresse IP de classe A.")
-                return
-        elif first_octet == 127:  # Classe réservée
-            self.res_label.setText("Adresse IP réservée (127.x.x.x) non acceptée.")
-            return
-        elif 128 <= first_octet <= 191:  # Classe B
-            expected_mask = "255.255.0.0"
-            mask_class = "Classe B"
-            valid_subnets = [
-                "255.255.0.0", "255.255.128.0", "255.255.192.0", "255.255.224.0", "255.255.240.0",
-                "255.255.248.0", "255.255.252.0", "255.255.254.0", "255.255.255.0"
-            ]
-            if mask not in valid_subnets:
-                self.res_label.setText("Masque invalide pour une adresse IP de classe B.")
-                return
-        elif 192 <= first_octet <= 223:  # Classe C
-            expected_mask = "255.255.255.0"
-            mask_class = "Classe C"
-            valid_subnets = [
-                "255.255.255.0", "255.255.255.128", "255.255.255.192", "255.255.255.224",
-                "255.255.255.240", "255.255.255.248", "255.255.255.252"
-            ]
-            if mask not in valid_subnets:
-                self.res_label.setText("Masque invalide pour une adresse IP de classe C.")
-                return
-        elif 224 <= first_octet <= 239:  # Classe D
-            self.res_label.setText("Pas de masque autorisé pour une adresse IP de classe D.")
-            return
-        elif 240 <= first_octet <= 255:  # Classe E
-            self.res_label.setText("Pas de masque autorisé pour une adresse IP de classe E.")
+            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
+
+            if mask != expected_mask:
+                # Découpage en sous-réseaux
+                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
+                self.res_label.setText(
+                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
+                )
+            else:
+                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
             return
 
-        # Afficher les résultats avec la classe du masque
-        self.res_label.setText(f"IP : {ip}, Masque : {mask}, Classe du masque : {mask_class}")
+        elif 128 <= first_octet <= 191:  # Classe B
+            expected_mask = "255.255.0.0"
+            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
+
+            if mask != expected_mask:
+                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
+                self.res_label.setText(
+                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
+                )
+            else:
+                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
+            return
+
+        elif 192 <= first_octet <= 223:  # Classe C
+            expected_mask = "255.255.255.0"
+            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
+
+            if mask != expected_mask:
+                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
+                self.res_label.setText(
+                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
+                )
+            else:
+                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
+            return
+
+        # Classe D et E: 224 - 255, non valides
+        elif 224 <= first_octet <= 239:  # Classe D
+            self.res_label.setText("Pas de masque valide pour une adresse IP de classe D.")
+            return
+        elif 240 <= first_octet <= 255:  # Classe E
+            self.res_label.setText("Pas de masque valide pour une adresse IP de classe E.")
+            return
+
+    # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
+    def calculate_subnet(self, ip, mask):
+        # Convertir IP et masque en binaire
+        ip_bin = ''.join([bin(int(x)+256)[3:] for x in ip.split('.')])
+        mask_bin = ''.join([bin(int(x)+256)[3:] for x in mask.split('.')])
+
+        # Calcul de l'adresse réseau (AND entre IP et masque)
+        network_bin = ''.join(['1' if ip_bin[i] == '1' and mask_bin[i] == '1' else '0' for i in range(32)])
+
+        # Calcul de l'adresse de broadcast (OR entre adresse réseau et inverse du masque)
+        broadcast_bin = ''.join([network_bin[i] if mask_bin[i] == '1' else '1' for i in range(32)])
+
+        # Conversion des adresses binaires en format décimal
+        first_ip = '.'.join([str(int(network_bin[i:i+8], 2)) for i in range(0, 32, 8)])
+        last_ip = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
+
+        return first_ip, last_ip
