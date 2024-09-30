@@ -142,102 +142,44 @@ class GuiClassFull(QWidget):
         first_octet = int(ip.split('.')[0])
 
         # Calcul du nombre total d'hôtes possibles
-        total_hosts = (2 ** (32 - sum([bin(int(x)).count('1') for x in mask.split('.')])) - 2)
+        total_hosts = self.calculate_hosts(mask)
 
-        if 1 <= first_octet <= 126:  # Classe A
+        # Logique de classe A, B et C
+        if first_octet in range(1, 127):  # Classe A
             expected_mask = "255.0.0.0"
-            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
-
-            if mask != expected_mask:
-                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
-                self.res_label.setText(
-                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
-                )
-            else:
-                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
-
-            # Vérification de la découpe par sous-réseaux
-            max_subnets = 2 ** (8 - int(mask_to_cidr(mask)))  # Conversion de mask_to_cidr en int
-            if subnet_count <= max_subnets:
-                self.res_label.setText(self.res_label.text() + f"\nMax de sous-réseaux possibles : {max_subnets}")
-                self.provide_subnet_plan(ip, mask, subnet_count)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en sous-réseaux impossible.")
-
-            # Vérification de la découpe par nombre d'hôtes
-            if hosts_per_subnet <= (total_hosts // subnet_count):
-                self.res_label.setText(self.res_label.text() + f"\nMax d'hôtes possibles par sous-réseau : {total_hosts // subnet_count}")
-                self.provide_host_plan(ip, mask, hosts_per_subnet)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en hôtes impossible.")
-
-            return
-
-        elif 128 <= first_octet <= 191:  # Classe B
+        elif first_octet in range(128, 192):  # Classe B
             expected_mask = "255.255.0.0"
-            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
-
-            if mask != expected_mask:
-                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
-                self.res_label.setText(
-                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
-                )
-            else:
-                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
-
-            # Vérification de la découpe par sous-réseaux
-            max_subnets = 2 ** (16 - int(mask_to_cidr(mask)))  # Conversion de mask_to_cidr en int
-            if subnet_count <= max_subnets:
-                self.res_label.setText(self.res_label.text() + f"\nMax de sous-réseaux possibles : {max_subnets}")
-                self.provide_subnet_plan(ip, mask, subnet_count)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en sous-réseaux impossible.")
-
-            # Vérification de la découpe par nombre d'hôtes
-            if hosts_per_subnet <= (total_hosts // subnet_count):
-                self.res_label.setText(self.res_label.text() + f"\nMax d'hôtes possibles par sous-réseau : {total_hosts // subnet_count}")
-                self.provide_host_plan(ip, mask, hosts_per_subnet)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en hôtes impossible.")
-
-            return
-
-        elif 192 <= first_octet <= 223:  # Classe C
+        elif first_octet in range(192, 224):  # Classe C
             expected_mask = "255.255.255.0"
-            default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
-
-            if mask != expected_mask:
-                subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
-                self.res_label.setText(
-                    f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}"
-                )
-            else:
-                self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
-
-            # Vérification de la découpe par sous-réseaux
-            max_subnets = 2 ** (24 - int(mask_to_cidr(mask)))  # Conversion de mask_to_cidr en int
-            if subnet_count <= max_subnets:
-                self.res_label.setText(self.res_label.text() + f"\nMax de sous-réseaux possibles : {max_subnets}")
-                self.provide_subnet_plan(ip, mask, subnet_count)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en sous-réseaux impossible.")
-
-            # Vérification de la découpe par nombre d'hôtes
-            if hosts_per_subnet <= (total_hosts // subnet_count):
-                self.res_label.setText(self.res_label.text() + f"\nMax d'hôtes possibles par sous-réseau : {total_hosts // subnet_count}")
-                self.provide_host_plan(ip, mask, hosts_per_subnet)
-            else:
-                self.res_label.setText(self.res_label.text() + "\nDécoupe en hôtes impossible.")
-
+        else:
+            self.res_label.setText("Classe IP non valide.")
             return
 
-        # Classe D et E: 224 - 255, non valides
-        elif 224 <= first_octet <= 239:  # Classe D
-            self.res_label.setText("Pas de masque valide pour une adresse IP de classe D.")
-            return
-        elif 240 <= first_octet <= 255:  # Classe E
-            self.res_label.setText("Pas de masque valide pour une adresse IP de classe E.")
-            return
+        default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
+
+        if mask != expected_mask:
+            subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
+            self.res_label.setText(f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}")
+        else:
+            self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
+
+        # Vérification de la découpe par sous-réseaux
+        total_bits = 32 - int(mask_to_cidr(mask))
+        max_subnets = 2 ** total_bits
+        required_bits = subnet_count.bit_length()
+
+        if required_bits <= total_bits:
+            self.res_label.setText(self.res_label.text() + f"\nMax de sous-réseaux possibles : {max_subnets}")
+            self.provide_subnet_plan(ip, mask, subnet_count)
+        else:
+            self.res_label.setText(self.res_label.text() + "\nDécoupe en sous-réseaux impossible.")
+
+        # Vérification de la découpe par nombre d'hôtes
+        if hosts_per_subnet <= (total_hosts // subnet_count):
+            self.res_label.setText(self.res_label.text() + f"\nMax d'hôtes possibles par sous-réseau : {total_hosts // subnet_count}")
+            self.provide_host_plan(ip, mask, hosts_per_subnet)
+        else:
+            self.res_label.setText(self.res_label.text() + "\nDécoupe en hôtes impossible.")
 
     # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
     def calculate_subnet(self, ip, mask):
@@ -249,23 +191,25 @@ class GuiClassFull(QWidget):
         network_bin = ''.join(['1' if ip_bin[i] == '1' and mask_bin[i] == '1' else '0' for i in range(32)])
 
         # Calcul de l'adresse de broadcast (OR entre adresse réseau et l'inverse du masque)
-        broadcast_bin = ''.join([network_bin[i] if mask_bin[i] == '1' else '1' for i in range(32)])
+        broadcast_bin = ''.join(['1' if network_bin[i] == '1' or mask_bin[i] == '0' else '0' for i in range(32)])
 
         # Conversion des adresses binaires en format décimal
         first_ip = '.'.join([str(int(network_bin[i:i+8], 2)) for i in range(0, 32, 8)])
         last_ip = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
 
         return first_ip, last_ip
+    
+    def calculate_hosts(self, mask):
+        # Convertir le masque en CIDR
+        cidr = mask_to_cidr(mask)
+        # Calculer le nombre d'hôtes par sous-réseau
+        total_hosts = (2 ** (32 - cidr)) - 2  # Soustraire 2 pour le réseau et le broadcast
+        return total_hosts
 
     def provide_subnet_plan(self, ip, mask, subnet_count):
         # Générer le plan d'adressage pour le nombre de sous-réseaux
-        subnet_cidr = mask_to_cidr(mask)
-        new_mask = cidr_to_mask(subnet_cidr + (subnet_count - 1).bit_length())
-        # Calculer et afficher les sous-réseaux
-        # Exemple : afficher les adresses des sous-réseaux
-        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage : {new_mask}")
+        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage pour {subnet_count} sous-réseaux généré.")
 
     def provide_host_plan(self, ip, mask, hosts_per_subnet):
-        # Calculer et afficher le plan d'adressage basé sur le nombre d'hôtes par sous-réseau
-        # Exemple : afficher les adresses des sous-réseaux
-        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage pour {hosts_per_subnet} hôtes par sous-réseau.")
+        # Générer le plan d'adressage pour le nombre d'hôtes par sous-réseau
+        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage pour {hosts_per_subnet} hôtes par sous-réseau généré.")
