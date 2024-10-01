@@ -1,6 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, QApplication
-from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
+from PyQt5.QtWidgets import (QWidget, QLabel, QFormLayout, QGroupBox, 
+                             QLineEdit, QVBoxLayout, QHBoxLayout, 
+                             QPushButton, QApplication, QStackedWidget, 
+                             QTableWidget, QTableWidgetItem)
+from utils import validate_ip, validate_mask, mask_to_cidr
 import sys
+import ipaddress
 
 class GuiClassFull(QWidget): 
     def __init__(self, main_window):
@@ -10,206 +14,245 @@ class GuiClassFull(QWidget):
 
     def initUI(self):
         main_layout = QVBoxLayout()
-
-        # Formulaire
-        form_group = QGroupBox('Mode ClassFull:')
-        form_layout = QFormLayout()
-
-        # Adresse IP
-        self.ip_input = QLineEdit()
-        self.ip_input.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
-        self.ip_input.setObjectName("ip_input")
-        self.ip_input.setFixedHeight(70)
-
-        # Masque
-        self.mask_input = QLineEdit()
-        self.mask_input.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
-        self.mask_input.setObjectName("mask_input")
-        self.mask_input.setFixedHeight(70)
-
-        # Nombre de sous-réseaux
-        self.subnet_count_input = QLineEdit()
-        self.subnet_count_input.setPlaceholderText("Nombre de sous-réseaux")
-        self.subnet_count_input.setObjectName("subnet_count_input")
-        self.subnet_count_input.setFixedHeight(70)
-
-        # Nombre d'hôtes par sous-réseau
-        self.hosts_per_subnet_input = QLineEdit()
-        self.hosts_per_subnet_input.setPlaceholderText("Nombre d'hôtes par sous-réseau")
-        self.hosts_per_subnet_input.setObjectName("hosts_per_subnet_input")
-        self.hosts_per_subnet_input.setFixedHeight(70)
-
-        # Labels pour Adresse IP et Masque, nb de sous-réseau et nb d'hôtes
-        self.ip_label = QLabel('Adresse IP:')
-        self.ip_label.setObjectName("ip_label")
+        self.stacked_widget = QStackedWidget()
         
-        self.mask_label = QLabel('Masque de sous-réseaux:')
-        self.mask_label.setObjectName("mask_label")
-
-        self.subnet_count_label = QLabel('Nombre de sous-réseaux:')
-        self.subnet_count_label.setObjectName("subnet_count_label")
-
-        self.hosts_per_subnet_label = QLabel('Nombre d\'hôtes par sous-réseau:')
-        self.hosts_per_subnet_label.setObjectName("hosts_per_subnet_label")
-
-        # Ajout des champs de saisie et des labels au formulaire
-        form_layout.addRow(self.ip_label, self.ip_input)
-        form_layout.addRow(self.mask_label, self.mask_input)
-        form_layout.addRow(self.subnet_count_label, self.subnet_count_input)
-        form_layout.addRow(self.hosts_per_subnet_label, self.hosts_per_subnet_input)
-
-        # Résultats
-        self.result_label = QLabel('Résultats : ')
-        self.result_label.setObjectName("result_label")
-        self.res_label = QLabel()
-        form_layout.addRow(self.result_label, self.res_label)
-
-        form_group.setLayout(form_layout)
-        main_layout.addWidget(form_group)
-
-        # Layout pour les boutons
+        self.create_interface_1()
+        self.create_interface_2()
+        self.create_interface_3()
+        
+        self.stacked_widget.addWidget(self.interface_1)
+        self.stacked_widget.addWidget(self.interface_2)
+        self.stacked_widget.addWidget(self.interface_3)
+        
         btn_group = QHBoxLayout()
         
-        # Bouton "Changer de mode"
-        prevBtn = QPushButton("Changer de mode")
-        prevBtn.setObjectName("prevBtn")
-        prevBtn.clicked.connect(self.show_classless)
-        btn_group.addWidget(prevBtn)
+        interface1_btn = QPushButton("Vérifier le masque et retour des adresses")
+        interface1_btn.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
+        btn_group.addWidget(interface1_btn)
 
-        # Bouton Calculer
-        calculateBtn = QPushButton("Calculer")
-        calculateBtn.setObjectName("calculateBtn")
-        calculateBtn.clicked.connect(self.calculate)
-        btn_group.addWidget(calculateBtn)
+        interface2_btn = QPushButton("Vérifier l'appartenance IP")
+        interface2_btn.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(1))
+        btn_group.addWidget(interface2_btn)
 
-        # Bouton pour reset le contenu des champs
-        resetBtn = QPushButton("Vider les champs")
-        resetBtn.setObjectName("resetBtn")
-        resetBtn.clicked.connect(self.reset_field)
-        btn_group.addWidget(resetBtn)
+        interface3_btn = QPushButton("Réaliser une découpe VLSM")
+        interface3_btn.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(2))
+        btn_group.addWidget(interface3_btn)
 
-        # Bouton pour quitter le programme
-        quitBtn = QPushButton("Quitter")
-        quitBtn.setObjectName("quitBtn")
-        quitBtn.clicked.connect(QApplication.quit)
-        btn_group.addWidget(quitBtn)
-
-        # Ajout du layout des boutons au layout principal
         main_layout.addLayout(btn_group)
+        main_layout.addWidget(self.stacked_widget)
 
         self.setLayout(main_layout)
 
-    def reset_field(self):
-        self.ip_input.clear()
-        self.mask_input.clear()
-        self.res_label.clear()
-        self.subnet_count_input.clear()
-        self.hosts_per_subnet_input.clear()
+    def create_interface_1(self):
+        self.interface_1 = QWidget()
+        layout = QVBoxLayout()
 
-    def show_classless(self):
-        self.main_window.showClassLessWidget()
+        form_group = QGroupBox('Vérifier le masque et calculer réseau/broadcast:')
+        form_layout = QFormLayout()
 
-    def calculate(self):
-        ip = self.ip_input.text()
-        mask = self.mask_input.text()
+        self.ip_input_1 = QLineEdit()
+        self.ip_input_1.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
+        form_layout.addRow(QLabel("Adresse IP:"), self.ip_input_1)
 
-        # Validation de l'adresse IP
+        self.mask_input_1 = QLineEdit()
+        self.mask_input_1.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
+        form_layout.addRow(QLabel("Masque:"), self.mask_input_1)
+
+        self.result_label_1 = QLabel()
+        form_layout.addRow(QLabel("Résultat:"), self.result_label_1)
+
+        form_group.setLayout(form_layout)
+        layout.addWidget(form_group)
+
+        calculate_btn = QPushButton("Calculer")
+        calculate_btn.clicked.connect(self.calculate_interface_1)
+        layout.addWidget(calculate_btn)
+
+        self.interface_1.setLayout(layout)
+
+    def create_interface_2(self):
+        self.interface_2 = QWidget()
+        layout = QVBoxLayout()
+
+        form_group = QGroupBox("Vérifier l'appartenance à un réseau:")
+        form_layout = QFormLayout()
+
+        self.ip_input_2 = QLineEdit()
+        self.ip_input_2.setPlaceholderText("Entrer l'adresse IP")
+        form_layout.addRow(QLabel("Adresse IP:"), self.ip_input_2)
+
+        self.mask_input_2 = QLineEdit()
+        self.mask_input_2.setPlaceholderText("Entrer le masque")
+        form_layout.addRow(QLabel("Masque:"), self.mask_input_2)
+
+        self.network_input_2 = QLineEdit()
+        self.network_input_2.setPlaceholderText("Entrer l'adresse réseau")
+        form_layout.addRow(QLabel("Adresse réseau:"), self.network_input_2)
+
+        self.result_label_2 = QLabel()
+        form_layout.addRow(QLabel("Résultat:"), self.result_label_2)
+
+        form_group.setLayout(form_layout)
+        layout.addWidget(form_group)
+
+        verify_btn = QPushButton("Vérifier")
+        verify_btn.clicked.connect(self.verify_interface_2)
+        layout.addWidget(verify_btn)
+
+        self.interface_2.setLayout(layout)
+
+    def create_interface_3(self):
+        self.interface_3 = QWidget()
+        layout = QVBoxLayout()
+
+        form_group = QGroupBox('Découper en sous-réseaux VLSM:')
+        form_layout = QFormLayout()
+
+        self.ip_input_3 = QLineEdit()
+        self.ip_input_3.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.1.0)")
+        form_layout.addRow(QLabel("Adresse IP:"), self.ip_input_3)
+
+        self.mask_input_3 = QLineEdit()
+        self.mask_input_3.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
+        form_layout.addRow(QLabel("Masque:"), self.mask_input_3)
+
+        self.hoster_input_3 = QLineEdit()
+        self.hoster_input_3.setPlaceholderText("Entrer le nombre d'hôtes maximum pour tous les sous-réseaux (ex: 10)")
+        form_layout.addRow(QLabel("Hôtes maximum par sous-réseau:"), self.hoster_input_3)
+
+        form_group.setLayout(form_layout)
+        layout.addWidget(form_group)
+
+        # Create a table to display VLSM results
+        self.result_table = QTableWidget()
+        self.result_table.setColumnCount(7)
+        self.result_table.setHorizontalHeaderLabels(["Sous-réseau", "Masque", "Premier hôte", "Dernier hôte", "Broadcast", "Plage d'adresses", "Nombre d'hôtes"])
+        layout.addWidget(self.result_table)
+
+        vlsm_btn = QPushButton("Découper")
+        vlsm_btn.clicked.connect(self.calculate_vlsm_interface_3)
+        layout.addWidget(vlsm_btn)
+
+        clear_btn = QPushButton("Vider les champs")
+        clear_btn.clicked.connect(self.clear_fields_interface_3)
+        layout.addWidget(clear_btn)
+
+        # Adding result label for displaying messages
+        self.result_label_3 = QLabel()
+        layout.addWidget(self.result_label_3)
+
+        self.interface_3.setLayout(layout)
+
+    def clear_fields_interface_3(self):
+        self.ip_input_3.clear()
+        self.mask_input_3.clear()
+        self.hoster_input_3.clear()
+        self.result_table.setRowCount(0)
+
+    def calculate_interface_1(self):
+        ip = self.ip_input_1.text()
+        mask = self.mask_input_1.text()
+
         if not validate_ip(ip):
-            self.res_label.setText("Adresse IP invalide.")
+            self.result_label_1.setText("Adresse IP invalide.")
+            return
+        if not validate_mask(mask):
+            self.result_label_1.setText("Masque invalide.")
             return
 
-        # Validation du masque (doit être en format décimal pour ClassFull)
-        if mask.startswith("/"):
-            self.res_label.setText("Le masque doit être en format décimal pour le mode ClassFull.")
+        network, broadcast = self.calculate_subnet(ip, mask)
+        self.result_label_1.setText(f"Adresse réseau: {network}, Adresse broadcast: {broadcast}")
+
+    def verify_interface_2(self):
+        ip = self.ip_input_2.text()
+        mask = self.mask_input_2.text()
+        network = self.network_input_2.text()
+
+        if not validate_ip(ip) or not validate_ip(network):
+            self.result_label_2.setText("Adresse IP ou réseau invalide.")
             return
-        elif not validate_mask(mask):
-            self.res_label.setText("Masque décimal invalide.")
+        if not validate_mask(mask):
+            self.result_label_2.setText("Masque invalide.")
             return
 
-        # Validation des sous-réseaux et hôtes
+        network_ip, _ = self.calculate_subnet(network, mask)
+        belongs = ipaddress.ip_address(ip) in ipaddress.ip_network(f"{network_ip}/{mask}", strict=False)
+        self.result_label_2.setText(f"L'IP appartient au réseau." if belongs else f"L'IP n'appartient pas au réseau.")
+
+    def calculate_vlsm_interface_3(self):
+        ip = self.ip_input_3.text()
+        mask = self.mask_input_3.text()
+        max_hosts_input = self.hoster_input_3.text()
+
+        if not validate_ip(ip):
+            self.result_label_3.setText("Adresse IP invalide.")
+            return
+
+        if not validate_mask(mask):
+            self.result_label_3.setText("Masque invalide.")
+            return
+
         try:
-            subnet_count = int(self.subnet_count_input.text())
-            hosts_per_subnet = int(self.hosts_per_subnet_input.text())
+            max_hosts = int(max_hosts_input)
+            if max_hosts <= 0:
+                self.result_label_3.setText("Le nombre d'hôtes maximum doit être un entier positif.")
+                return
+
+            result = self.vlsm_fixed_hosts(ip, mask, max_hosts)
+            self.result_table.setRowCount(len(result))  # Définir dynamiquement le nombre de lignes
+            self.display_results_in_table(result)
+            print(result)
+
         except ValueError:
-            self.res_label.setText("Veuillez entrer un nombre valide pour les sous-réseaux et les hôtes.")
-            return
+            self.result_label_3.setText("Le nombre d'hôtes maximum doit être un entier.")
 
-        if subnet_count <= 0 or hosts_per_subnet <= 0:
-            self.res_label.setText("Le nombre de sous-réseaux et d'hôtes doit être supérieur à zéro.")
-            return
+    def display_results_in_table(self, subnets):
+        for row, subnet in enumerate(subnets):
+            for col, value in enumerate(subnet):
+                self.result_table.setItem(row, col, QTableWidgetItem(str(value)))
 
-        # Vérification de la classe IP à partir du premier octet
-        first_octet = int(ip.split('.')[0])
-
-        # Calcul du nombre total d'hôtes possibles
-        total_hosts = self.calculate_hosts(mask)
-
-        # Logique de classe A, B et C
-        if first_octet in range(1, 127):  # Classe A
-            expected_mask = "255.0.0.0"
-        elif first_octet in range(128, 192):  # Classe B
-            expected_mask = "255.255.0.0"
-        elif first_octet in range(192, 224):  # Classe C
-            expected_mask = "255.255.255.0"
-        else:
-            self.res_label.setText("Classe IP non valide.")
-            return
-
-        default_network, default_broadcast = self.calculate_subnet(ip, expected_mask)
-
-        if mask != expected_mask:
-            subnet_network, subnet_broadcast = self.calculate_subnet(ip, mask)
-            self.res_label.setText(f"IP de sous-réseau : {subnet_network}, IP de broadcast : {subnet_broadcast}")
-        else:
-            self.res_label.setText(f"Adresse réseau : {default_network}, Adresse broadcast : {default_broadcast}")
-
-        # Vérification de la découpe par sous-réseaux
-        total_bits = 32 - int(mask_to_cidr(mask))
-        max_subnets = 2 ** total_bits
-        required_bits = subnet_count.bit_length()
-
-        if required_bits <= total_bits:
-            self.res_label.setText(self.res_label.text() + f"\nMax de sous-réseaux possibles : {max_subnets}")
-            self.provide_subnet_plan(ip, mask, subnet_count)
-        else:
-            self.res_label.setText(self.res_label.text() + "\nDécoupe en sous-réseaux impossible.")
-
-        # Vérification de la découpe par nombre d'hôtes
-        if hosts_per_subnet <= (total_hosts // subnet_count):
-            self.res_label.setText(self.res_label.text() + f"\nMax d'hôtes possibles par sous-réseau : {total_hosts // subnet_count}")
-            self.provide_host_plan(ip, mask, hosts_per_subnet)
-        else:
-            self.res_label.setText(self.res_label.text() + "\nDécoupe en hôtes impossible.")
-
-    # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
     def calculate_subnet(self, ip, mask):
-        # Convertir IP et masque en binaire
-        ip_bin = ''.join([bin(int(x)+256)[3:] for x in ip.split('.')])
-        mask_bin = ''.join([bin(int(x)+256)[3:] for x in mask.split('.')])
+        net = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
+        return str(net.network_address), str(net.broadcast_address)
 
-        # Calcul de l'adresse réseau (AND entre IP et masque)
-        network_bin = ''.join(['1' if ip_bin[i] == '1' and mask_bin[i] == '1' else '0' for i in range(32)])
+    def vlsm_fixed_hosts(self, ip, mask, max_hosts):
+        # Utiliser le masque fourni par l'utilisateur pour créer le réseau
+        base_network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
+        result = []
+        
+        # Calculer le masque nécessaire pour le nombre d'hôtes
+        needed_bits = self.calculate_mask_for_hosts(max_hosts)
+        
+        # Commencer avec le réseau de base
+        current_network = base_network.network_address
+        
+        # Boucle pour découper le réseau en sous-réseaux
+        while current_network < base_network.broadcast_address:
+            new_mask = base_network.max_prefixlen - needed_bits
+            new_subnet = ipaddress.IPv4Network(f"{current_network}/{new_mask}", strict=False)
 
-        # Calcul de l'adresse de broadcast (OR entre adresse réseau et l'inverse du masque)
-        broadcast_bin = ''.join(['1' if network_bin[i] == '1' or mask_bin[i] == '0' else '0' for i in range(32)])
+            # Vérifier si le sous-réseau est en dehors de l'espace d'adresses
+            if new_subnet.broadcast_address > base_network.broadcast_address:
+                break
+            
+            first_host = new_subnet.network_address + 1
+            last_host = new_subnet.broadcast_address - 1
 
-        # Conversion des adresses binaires en format décimal
-        first_ip = '.'.join([str(int(network_bin[i:i+8], 2)) for i in range(0, 32, 8)])
-        last_ip = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
+            result.append([
+                str(new_subnet.network_address),
+                str(new_subnet.netmask),
+                str(first_host),
+                str(last_host),
+                str(new_subnet.broadcast_address),
+                f"{first_host} - {last_host}",
+                max_hosts
+            ])
 
-        return first_ip, last_ip
-    
-    def calculate_hosts(self, mask):
-        # Convertir le masque en CIDR
-        cidr = mask_to_cidr(mask)
-        # Calculer le nombre d'hôtes par sous-réseau
-        total_hosts = (2 ** (32 - cidr)) - 2  # Soustraire 2 pour le réseau et le broadcast
-        return total_hosts
+            # Passer au sous-réseau suivant
+            current_network = new_subnet.broadcast_address + 1
 
-    def provide_subnet_plan(self, ip, mask, subnet_count):
-        # Générer le plan d'adressage pour le nombre de sous-réseaux
-        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage pour {subnet_count} sous-réseaux généré.")
+        return result
 
-    def provide_host_plan(self, ip, mask, hosts_per_subnet):
-        # Générer le plan d'adressage pour le nombre d'hôtes par sous-réseau
-        self.res_label.setText(self.res_label.text() + f"\nPlan d'adressage pour {hosts_per_subnet} hôtes par sous-réseau généré.")
+    def calculate_mask_for_hosts(self, host_count):
+        return (host_count + 2).bit_length()  # +2 for network and broadcast addresses
+
