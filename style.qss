@@ -233,3 +233,192 @@
 #resetBtn:hover{
     background-color: #b88121;
 }
+/* Styles pour l'interface 1 */
+#ipInput1 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#ipInput1:hover {
+    background-color : #C7C5B8;
+}
+
+#maskInput1 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#maskInput1:hover {
+    background-color: #C7C5B8;
+}
+
+#resultLabel1 {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+}
+
+#calculateBtn1 {
+    font-style: 'Arial';
+    font-size: 20px;
+    background-color: #b05457;
+    color: white;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+    min-height: 45px;
+    font-weight: bold;
+}
+
+#calculateBtn1:hover {
+    background-color: #a43f3f;
+}
+
+
+/* Styles pour l'interface 2 */
+#ipInput2 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#ipInput2:hover {
+    background-color: #C7C5B8;
+}
+
+#maskInput2 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#maskInput2:hover {
+    background-color: #C7C5B8;
+}
+
+#networkInput2 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#networkInput2:hover {
+    background-color: #C7C5B8;
+}
+
+#resultLabel2 {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+}
+
+#calculateBtn2 {
+    font-style: 'Arial';
+    font-size: 20px;
+    background-color: #337AB7;
+    color: white;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+    min-height: 45px;
+    font-weight: bold;
+}
+
+#calculateBtn2:hover {
+    background-color: #2E6DA4;
+}
+
+
+/* Styles pour l'interface 3 */
+#form_group_3 {
+    border: 2px solid #4CAF50;
+    border-radius: 15px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+#ip_input_3, #subnet_input_3 {
+    font-style : 'Arial';
+    font-size: 32px;
+    background-color : #F7F7F7;
+    border:  2px solid #C7C5B8;
+    border-radius: 15px;
+    font-weight : bold;
+}
+
+#ip_input_3:hover, #subnet_input_3:hover {
+    background-color: #C7C5B8;
+}
+
+#calculate_button_3 {
+    font-style: 'Arial';
+    font-size: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+    min-height: 45px;
+    font-weight: bold;
+}
+
+#calculate_button_3:hover {
+    background-color: #45a049;
+}
+
+#result_table_3 {
+    background-color: white;
+    gridline-color: #C7C5B8;
+    font-size: 13px;
+    padding: 5px;
+    border: 2px solid #C7C5B8;
+    border-radius: 10px;
+}
+
+/* Styles pour le groupe de boutons */
+#interface1_btn, #interface2_btn, #interface3_btn, #interface4_btn {
+    font-style: 'Arial';
+    font-size: 20px;
+    background-color: #337AB7;
+    color: white;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+    padding: 10px 20px;
+    font-weight: bold;
+    min-height: 45px;
+}
+
+#interface1_btn:hover, #interface2_btn:hover, #interface3_btn:hover, #interface4_btn:hover {
+    background-color: #2E6DA4;
+}
+
+#interface1_btn:pressed, #interface2_btn:pressed, #interface3_btn:pressed, #interface4_btn:pressed {
+    background-color: #2A5D94;
+}
+
+#main_layout {
+    background-color: #F7F7F7;
+    padding: 20px;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+}
+
+#stacked_widget {
+    background-color: white;
+    border: 2px solid #C7C5B8;
+    border-radius: 15px;
+}
