@@ -1,27 +1,23 @@
 #utils.py
 #Classe pour les traitements
+import re
 import ipaddress
 
 # Validation de l'adresse IP
 def validate_ip(ip):
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
+    ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+    if not re.match(ip_pattern, ip):
         return False
+    octets = ip.split('.')
+    return all(0 <= int(octet) <= 255 for octet in octets) and len(octets) == 4
 
 # Validation du masque (notation CIDR ou décimale)
 def validate_mask(mask):
-    try:
-        if mask.startswith('/'):
-            # Valider le format CIDR
-            ipaddress.ip_network(f"0.0.0.0{mask}", strict=False)
-        else:
-            # Valider le format décimal en le convertissant en réseau
-            ipaddress.IPv4Network(f"0.0.0.0/{mask}", strict=False)
-        return True
-    except ValueError:
-        return False
+    if mask.startswith('/'):
+        cidr_pattern = r'^/([1-9]|[12][0-9]|3[0-2])$'
+        return bool(re.match(cidr_pattern, mask))
+    else:
+        return validate_ip(mask)
 
 # Conversion de masque décimal vers CIDR
 def mask_to_cidr(mask):
@@ -40,3 +36,20 @@ def cidr_to_mask(cidr):
         return str(network.netmask)
     except ValueError:
         return None  # Retourner None si la notation CIDR est invalide
+
+# Validation de la notation CIDR
+def validate_cidr(cidr):
+    cidr_pattern = r'^(\d{1,3}\.){3}\d{1,3}/([1-9]|[12][0-9]|3[0-2])$'
+    return bool(re.match(cidr_pattern, cidr))
+
+def validate_subnet_count(count):
+    return bool(re.match(r'^[1-9]\d*$', count))
+
+def validate_host_count(count):
+    return bool(re.match(r'^[1-9]\d*$', count))
+
+def validate_username(username):
+    return bool(re.match(r'^[a-zA-Z0-9_]{3,20}$', username))
+
+def validate_password(password):
+    return bool(re.match(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', password))

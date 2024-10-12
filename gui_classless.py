@@ -22,13 +22,11 @@ class GuiClassLess(QWidget):
         self.ip_input = QLineEdit()
         self.ip_input.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
         self.ip_input.setObjectName("ip_input")
-        self.ip_input.setFixedHeight(70)
 
         # Masque
         self.mask_input = QLineEdit()
         self.mask_input.setPlaceholderText("Entrer le masque (ex:/24)")
         self.mask_input.setObjectName("mask_input")
-        self.mask_input.setFixedHeight(70)
 
         # Labels pour Adresse IP et Masque avec objectName
         self.ip_label = QLabel('Adresse IP:')
@@ -53,11 +51,6 @@ class GuiClassLess(QWidget):
         # Layout pour les boutons
         btn_group = QHBoxLayout()
         
-        # Bouton "Changer de mode"
-        prevBtn = QPushButton("Changer de mode")
-        prevBtn.setObjectName("prevBtn")
-        prevBtn.clicked.connect(self.show_classfull)
-        btn_group.addWidget(prevBtn)
 
         # Bouton Calculer
         calculateBtn = QPushButton("Calculer")
@@ -70,13 +63,6 @@ class GuiClassLess(QWidget):
         resetBtn.setObjectName("resetBtn")
         resetBtn.clicked.connect(self.reset_field)
         btn_group.addWidget(resetBtn)
-
-        # Bouton pour quitter le programme
-        quitBtn = QPushButton("Quitter")
-        quitBtn.setObjectName("quitBtn")
-        quitBtn.clicked.connect(QApplication.quit)
-        btn_group.addWidget(quitBtn)
-
 
         # Ajout du layout des boutons au layout principal
         main_layout.addLayout(btn_group)
@@ -95,26 +81,22 @@ class GuiClassLess(QWidget):
         ip = self.ip_input.text()
         cidr_mask = self.mask_input.text()
 
-        # Validation de l'adresse IP
         if not validate_ip(ip):
-            self.res_label.setText("Adresse IP invalide.")
+            self.res_label.setText("Adresse IP invalide. Format attendu : xxx.xxx.xxx.xxx (0-255 pour chaque octet)")
             return
 
-        # Validation du masque en notation CIDR
-        if not cidr_mask.startswith("/") or not validate_mask(cidr_mask):
-            self.res_label.setText("Le masque doit être en notation CIDR (ex: /24).")
+        if not validate_mask(cidr_mask):
+            self.res_label.setText("Masque invalide. Format attendu : /xx (1-32) ou xxx.xxx.xxx.xxx")
             return
 
-        # Extraire la valeur CIDR (ex: /24 -> 24)
+        if not cidr_mask.startswith('/'):
+            cidr_mask = '/' + str(mask_to_cidr(cidr_mask))
+
         cidr_value = int(cidr_mask[1:])
+        subnet_mask = cidr_to_mask(cidr_value)
 
-        # Convertir la notation CIDR en masque décimal
-        subnet_mask = cidr_to_mask(cidr_value)  # Par exemple, /24 devient 255.255.255.0
-
-        # Calculer l'adresse réseau et l'adresse de broadcast
         network_address, broadcast_address = self.calculate_subnet(ip, subnet_mask)
 
-        # Affichage des résultats
         self.res_label.setText(f"Adresse réseau : {network_address}\nAdresse de broadcast : {broadcast_address}")
 
     # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
@@ -134,4 +116,7 @@ class GuiClassLess(QWidget):
         broadcast_address = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
 
         return network_address, broadcast_address
+
+
+
 

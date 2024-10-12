@@ -1,424 +1,176 @@
 /* style.qss */
 
-/* login.py */
-/************/
-
-#title_label {
-    color: black;
-    font-size: 48px;
-    font-style: 'Arial';
-    font-weight : bold;
+/* Style général */
+QWidget {
+    background-color: #2C3E50;
+    color: #ECF0F1;
+    font-family: 'Roboto', sans-serif;
+    font-size: 26px;
 }
 
-#username_input {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
+/* Style pour les labels */
+QLabel {
+    font-size: 30px;
+    font-weight: bold;
+    color: #3498DB;
 }
 
-#username_input:hover{
-    background-color : #C7C5B8;
+/* Style pour les champs de saisie */
+QLineEdit, QTextEdit {
+    background-color: #34495E;
+    color: #ECF0F1;
+    border: 5px solid #3498DB;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 30px; /* Augmentation de la taille de police */
 }
 
-#password_input {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
+QLineEdit:focus, QTextEdit:focus {
+    border-color: #2980B9;
 }
 
-#password_input:hover{
-    background-color : #C7C5B8;
-}
-
-
-#loginBtn {
-    font-style : 'Arial';
-    font-size: 34px;
-    background-color: #337AB7;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
-}
-
-#loginBtn:hover{
-    background-color: #2E6DA4;
-}
-
-#registerBtn{
-    font-style : 'Arial';
-    font-size: 34px;
-    background-color: #b05457;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius:15px;
-    font-weight : bold;
-}
-
-#registerBtn:hover{
-    background-color: #a43f3f;
-}
-
-
-/* gui_main.py*/
-/**************/
-
-#toolBarTop {
-    background-color: #f0f0f0;
+/* Style pour les boutons */
+QPushButton {
+    background-color: #3498DB;
+    color: #ECF0F1;
     border: none;
-    padding: 5px;
-}
-
-#toolBarTop QToolButton {
-    background-color: #b05457;
-    color: white;
-    font-size: 14px;
-    border: 1px solid #d0d0d0;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-weight : bold;
-}
-
-#toolBarTop QToolButton:hover {
-    background-color : #7d393c;
-}
-
-#toolBarTop QToolButton:pressed {
-    background-color: #d0d0d0; /* Couleur lorsque le bouton est pressé */
-}
-
-/* gui_classfull.py et gui_classless.py */
-/**************/
-
-#ip_input {
-    font-size : 25px;
-    font-weight : bold;
-    font-style : 'Arial';
-    border : 2px solid #C7C5B8;
-    border-radius : 15px;
-}
-
-#ip_input:hover {
-    background-color : #C7C5B8;
-}
-
-#mask_input {
-    font-size : 25px;
-    font-weight : bold;
-    font-style : 'Arial';
-    border : 2px solid #C7C5B8;
-    border-radius : 15px;
-}
-
-#mask_input:hover {
-    background-color : #C7C5B8;
-}
-
-#subnet_count_input {
-    font-size : 25px;
-    font-weight : bold;
-    font-style : 'Arial';
-    border : 2px solid #C7C5B8;
-    border-radius : 15px;
-}
-
-#subnet_count_input:hover {
-    background-color : #C7C5B8;
-}
-
-#hosts_per_subnet_input {
-    font-size : 25px;
-    font-weight : bold;
-    font-style : 'Arial';
-    border : 2px solid #C7C5B8;
-    border-radius : 15px;
-}
-
-#hosts_per_subnet_input:hover {
-    background-color : #C7C5B8;
-}
-
-#ip_label {
-    font-size : 25px;
-    font-weight : bold;
-    color : black;
-}
-
-#mask_label {
-    font-size : 25px;
-    font-weight : bold;
-    color : black;
-}
-
-#hosts_per_subnet_label {
-    font-size : 25px;
-    font-weight : bold;
-    color : black;
-}
-
-#subnet_count_label {
-    font-size : 25px;
-    font-weight : bold;
-    color : black;
-}
-
-#result_label {
-    font-size : 25px;
-    font-weight : bold;
-    color : black;
-}
-
-#prevBtn {
-    font-style : 'Arial';
+    border-radius: 12px;
+    padding: 15px 30px;
     font-size: 20px;
-    background-color: #337AB7;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    min-height : 45px;
-    font-weight : bold;
-}
-
-#prevBtn:hover{
-    background-color: #2E6DA4;
-}
-
-#calculateBtn {
-    font-style : 'Arial';
-    font-size: 20px;
-    background-color: #b05457;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius:15px;
-    min-height : 45px;
-    font-weight : bold;
-}
-
-#calculateBtn:hover{
-    background-color: #a43f3f;
-}
-
-#quitBtn {
-    font-style : 'Arial';
-    font-size: 20px;
-    background-color: #257e32;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius:15px;
-    min-height : 45px;
-    font-weight : bold;
-}
-
-#quitBtn:hover{
-    background-color: #117620;
-}
-
-#resetBtn {
-    font-style : 'Arial';
-    font-size: 20px;
-    background-color: #ca8c22 ;
-    color: #fff;
-    border: 2px solid #C7C5B8;
-    border-radius:15px;
-    min-height : 45px;
-    font-weight : bold;
-}
-
-#resetBtn:hover{
-    background-color: #b88121;
-}
-/* Styles pour l'interface 1 */
-#ipInput1 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
-}
-
-#ipInput1:hover {
-    background-color : #C7C5B8;
-}
-
-#maskInput1 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
-}
-
-#maskInput1:hover {
-    background-color: #C7C5B8;
-}
-
-#resultLabel1 {
-    font-size: 25px;
-    font-weight: bold;
-    color: black;
-}
-
-#calculateBtn1 {
-    font-style: 'Arial';
-    font-size: 20px;
-    background-color: #b05457;
-    color: white;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    min-height: 45px;
     font-weight: bold;
 }
 
-#calculateBtn1:hover {
-    background-color: #a43f3f;
+QPushButton:hover {
+    background-color: #2980B9;
 }
 
-
-/* Styles pour l'interface 2 */
-#ipInput2 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
+QPushButton:pressed {
+    background-color: #2574A9;
 }
 
-#ipInput2:hover {
-    background-color: #C7C5B8;
-}
-
-#maskInput2 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
-}
-
-#maskInput2:hover {
-    background-color: #C7C5B8;
-}
-
-#networkInput2 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
-}
-
-#networkInput2:hover {
-    background-color: #C7C5B8;
-}
-
-#resultLabel2 {
-    font-size: 25px;
-    font-weight: bold;
-    color: black;
-}
-
-#calculateBtn2 {
-    font-style: 'Arial';
-    font-size: 20px;
-    background-color: #337AB7;
-    color: white;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    min-height: 45px;
+/* Style pour les groupes */
+QGroupBox {
+    border: 5px solid #3498DB;
+    border-radius: 12px;
+    margin-top: 35px;
+    font-size: 28px;
     font-weight: bold;
 }
 
-#calculateBtn2:hover {
-    background-color: #2E6DA4;
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 18px;
+    padding: 0 12px;
+    color: #3498DB;
 }
 
+/* Style pour les tableaux */
+QTableWidget {
+    background-color: #34495E;
+    gridline-color: #3498DB;
+    color: #ECF0F1;
+    border: none;
+    font-size: 22px;
+}
 
-/* Styles pour l'interface 3 */
-#form_group_3 {
-    border: 2px solid #4CAF50;
-    border-radius: 15px;
-    padding: 10px;
+QTableWidget::item {
+    padding: 18px;
+}
+
+QHeaderView::section {
+    background-color: #2C3E50;
+    color: #3498DB;
+    padding: 18px;
+    border: 3px solid #3498DB;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/* Styles spécifiques pour le tableau de l'interface 3 */
+#tableWidget_3 {
+    alternate-background-color: #2C3E50;
+}
+
+#tableWidget_3::item:selected {
+    background-color: #3498DB;
+    color: #ECF0F1;
+}
+
+#tableWidget_3 QHeaderView::section {
+    padding: 18px;
+}
+
+#tableWidget_3 QHeaderView::section:hover {
+    background-color: #34495E;
+}
+
+#tableWidget_3 QHeaderView::section:pressed {
+    background-color: #2980B9;
+}
+
+/* Ajuster la hauteur des lignes */
+#tableWidget_3::item {
+    min-height: 60px;
+}
+
+/* Style pour la barre d'outils */
+QToolBar {
+    background-color: #34495E;
+    border: none;
+    spacing: 18px;
+    padding: 12px;
+}
+
+QToolButton {
+    background-color: #3498DB;
+    color: #ECF0F1;
+    border-radius: 10px;
+    padding: 12px;
     font-weight: bold;
 }
 
-#ip_input_3, #subnet_input_3 {
-    font-style : 'Arial';
-    font-size: 32px;
-    background-color : #F7F7F7;
-    border:  2px solid #C7C5B8;
-    border-radius: 15px;
-    font-weight : bold;
+QToolButton:hover {
+    background-color: #2980B9;
 }
 
-#ip_input_3:hover, #subnet_input_3:hover {
-    background-color: #C7C5B8;
-}
-
-#calculate_button_3 {
-    font-style: 'Arial';
-    font-size: 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    min-height: 45px;
-    font-weight: bold;
-}
-
-#calculate_button_3:hover {
-    background-color: #45a049;
-}
-
-#result_table_3 {
-    background-color: white;
-    gridline-color: #C7C5B8;
-    font-size: 13px;
-    padding: 5px;
-    border: 2px solid #C7C5B8;
+/* Style pour le widget empilé */
+#stacked_widget {
+    background-color: #34495E;
+    border: 4px solid #3498DB;
     border-radius: 10px;
 }
 
-/* Styles pour le groupe de boutons */
-#interface1_btn, #interface2_btn, #interface3_btn, #interface4_btn {
-    font-style: 'Arial';
-    font-size: 20px;
-    background-color: #337AB7;
-    color: white;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
-    padding: 10px 20px;
-    font-weight: bold;
-    min-height: 45px;
-}
-
-#interface1_btn:hover, #interface2_btn:hover, #interface3_btn:hover, #interface4_btn:hover {
-    background-color: #2E6DA4;
-}
-
-#interface1_btn:pressed, #interface2_btn:pressed, #interface3_btn:pressed, #interface4_btn:pressed {
-    background-color: #2A5D94;
-}
-
+/* Style pour la disposition principale */
 #main_layout {
-    background-color: #F7F7F7;
-    padding: 20px;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
+    margin: 18px;
 }
 
-#stacked_widget {
-    background-color: white;
-    border: 2px solid #C7C5B8;
-    border-radius: 15px;
+/* Styles spécifiques pour les interfaces */
+#form_group_1, #form_group_2, #form_group_3, #form_group_4 {
+    background-color: #2C3E50;
+    padding: 28px;
+    border-radius: 10px;
+}
+
+#calculate_btn_1, #verify_btn_2, #calculate_btn_3, #calculate_btn_4 {
+    background-color: #27AE60;
+    font-size: 28px;
+}
+
+#calculate_btn_1:hover, #verify_btn_2:hover, #calculate_btn_3:hover, #calculate_btn_4:hover {
+    background-color: #2ECC71;
+}
+
+/* Style pour les résultats */
+QLabel[objectName^="resultLabel"] {
+    font-weight: bold;
+    color: #2ECC71;
+    font-size: 28px;
+}
+
+/* Style pour les labels des champs d'input */
+QLabel#username_label, QLabel#password_label {
+    font-size: 24px;
+    color: #ECF0F1;
+    margin-bottom: 10px;
 }

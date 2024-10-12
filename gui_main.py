@@ -1,9 +1,10 @@
 # gui_main.py
 # Interface principale avec un stackpane
-from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QStackedWidget
+from PyQt5.QtWidgets import QMainWindow, QToolBar, QAction, QStackedWidget, QPushButton
 from PyQt5.QtCore import Qt
 from gui_classfull import GuiClassFull
 from gui_classless import GuiClassLess 
+from PyQt5.QtWidgets import QApplication
 
 class GuiMain(QMainWindow):
     def __init__(self):
@@ -12,8 +13,7 @@ class GuiMain(QMainWindow):
         
     def initUI(self):
         self.setWindowTitle('Projet RéseauIP Groupe 9')
-        self.resize(1000, 800)
-        self.showMaximized()
+        self.setWindowState(Qt.WindowMaximized)
 
         # Création du QStackedWidget pour gérer les différentes interfaces
         self.central_widget = QStackedWidget()
@@ -50,6 +50,12 @@ class GuiMain(QMainWindow):
 
         # Ajout d'un séparateur
         toolbar.addSeparator()
+
+        # Ajout du bouton de fermeture dans la barre d'outils
+        quitBtn = QAction("Quitter le programme", self)
+        quitBtn.setObjectName("quitBtn")
+        quitBtn.triggered.connect(QApplication.quit)
+        toolbar.addAction(quitBtn)
 
     def showClassFullWidget(self):
         # Affichage de la fenêtre ClassFull
