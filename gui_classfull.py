@@ -8,6 +8,7 @@ from PyQt5.QtGui import QFont
 from utils import validate_ip, validate_mask, mask_to_cidr
 import sys
 import ipaddress
+import math
 
 class GuiClassFull(QWidget): 
     def __init__(self, main_window):
@@ -191,29 +192,55 @@ class GuiClassFull(QWidget):
 
         self.ip_input_4 = QLineEdit()
         self.ip_input_4.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.1.0)")
+        self.ip_input_4.setObjectName("ip_input_4")
         form_layout.addRow(QLabel("Adresse IP :"), self.ip_input_4)
 
         self.mask_input_4 = QLineEdit()
         self.mask_input_4.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
+        self.mask_input_4.setObjectName("mask_input_4")
         form_layout.addRow(QLabel("Masque:"), self.mask_input_4)
 
         self.host_input_4 = QLineEdit()
         self.host_input_4.setPlaceholderText("Entrer le nombre d'IP par sous-réseau")
+        self.host_input_4.setObjectName("host_input_4")
         form_layout.addRow(QLabel("Nombre d'IP par sous-réseau:"), self.host_input_4)
-
-        self.result_label_4 = QLabel()
-        form_layout.addRow(QLabel("Résultat:"), self.result_label_4)
 
         form_group.setLayout(form_layout)
         layout.addWidget(form_group)
 
         calculate_btn = QPushButton("Calculer")
         calculate_btn.setObjectName("calculate_btn_4")
+        calculate_btn.clicked.connect(self.calculate_subnets_interface_4)
         layout.addWidget(calculate_btn)
+
+        # Créer un tableau pour afficher les résultats
+        self.result_table_4 = QTableWidget(self)
+        self.result_table_4.setObjectName("tableWidget_4")
+        self.result_table_4.setColumnCount(7)
+        self.result_table_4.setHorizontalHeaderLabels([
+            "Numéro du Sous-Réseau",
+            "Adresse de Sous-Réseau",
+            "Adresse de Broadcast",
+            "1ère IP",
+            "Dernière IP",
+            "Pas",
+            "Nombre d'Hôtes"
+        ])
+
+        # Configurer l'en-tête horizontal pour remplir l'espace disponible
+        header = self.result_table_4.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        
+        # Configurer l'en-tête vertical pour s'ajuster au contenu
+        self.result_table_4.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        
+        # Permettre au tableau de s'étirer verticalement
+        self.result_table_4.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        
+        layout.addWidget(self.result_table_4)
 
         self.interface_4.setLayout(layout)
 
-    
     def calculate_interface_1(self):
         ip = self.ip_input_1.text()
         mask = self.mask_input_1.text()
@@ -273,6 +300,61 @@ class GuiClassFull(QWidget):
             self.result_table.setColumnCount(1)
             self.result_table.setItem(0, 0, QTableWidgetItem(f"Erreur : {e}"))
 
+    def calculate_subnets_interface_4(self):
+        ip = self.ip_input_4.text()
+        mask = self.mask_input_4.text()
+        try:
+            hosts_per_subnet = int(self.host_input_4.text())
+            subnets = self.calculate_subnets_by_hosts(ip, mask, hosts_per_subnet)
+
+            self.result_table_4.setRowCount(len(subnets))
+            for i, subnet in enumerate(subnets):
+                self.result_table_4.setItem(i, 0, QTableWidgetItem(str(subnet['numéro_du_sous_réseau'])))
+                self.result_table_4.setItem(i, 1, QTableWidgetItem(subnet['adresse_de_sous_réseau']))
+                self.result_table_4.setItem(i, 2, QTableWidgetItem(subnet['adresse_de_broadcast']))
+                self.result_table_4.setItem(i, 3, QTableWidgetItem(subnet['1ère_ip']))
+                self.result_table_4.setItem(i, 4, QTableWidgetItem(subnet['dernière_ip']))
+                self.result_table_4.setItem(i, 5, QTableWidgetItem(str(subnet['pas'])))
+                self.result_table_4.setItem(i, 6, QTableWidgetItem(str(subnet['nombre_d_hôtes'])))
+
+        except ValueError as e:
+            self.result_table_4.setRowCount(1)
+            self.result_table_4.setColumnCount(1)
+            self.result_table_4.setItem(0, 0, QTableWidgetItem(f"Erreur : {e}"))
+
+    def calculate_subnets_by_hosts(self, ip_str, mask_str, hosts_per_subnet):
+        network = ipaddress.IPv4Network(f"{ip_str}/{mask_str}", strict=False)
+        
+        # Calculer le nombre de bits nécessaires pour les hôtes
+        host_bits = math.ceil(math.log2(hosts_per_subnet + 2))  # +2 pour l'adresse réseau et de broadcast
+        
+        # Nouvelle longueur de masque
+        new_prefix = min(32, 32 - host_bits)
+        new_network = ipaddress.IPv4Network(f"{network.network_address}/{new_prefix}", strict=False)
+        
+        # Calculer le pas
+        pas = 2 ** (32 - new_prefix)
+        pas_ip = ipaddress.IPv4Address(pas)
+        
+        # Calculer le nombre de sous-réseaux possibles
+        num_subnets = 2 ** (new_prefix - network.prefixlen)
+        
+        subnets_info = []
+        for i in range(num_subnets):
+            subnet_address = new_network.network_address + (i * pas)
+            subnet = ipaddress.IPv4Network(f"{subnet_address}/{new_prefix}", strict=False)
+            
+            subnets_info.append({
+                "numéro_du_sous_réseau": i + 1,
+                "adresse_de_sous_réseau": str(subnet.network_address),
+                "adresse_de_broadcast": str(subnet.broadcast_address),
+                "1ère_ip": str(subnet.network_address + 1),
+                "dernière_ip": str(subnet.broadcast_address - 1),
+                "pas": str(pas_ip),
+                "nombre_d_hôtes": subnet.num_addresses - 2
+            })
+
+        return subnets_info
 
     def address_to_string(self, arr_address):
         return '.'.join(map(str, arr_address))
