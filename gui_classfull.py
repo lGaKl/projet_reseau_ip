@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QFormLayout, QGroupBox,
                              QLineEdit, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QApplication, QStackedWidget, 
                              QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QSizePolicy)
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QRegExpValidator
+from PyQt5.QtCore import QRegExp
 from utils import validate_ip, validate_mask, mask_to_cidr
 import sys
 import ipaddress
@@ -70,11 +71,17 @@ class GuiClassFull(QWidget):
         self.ip_input_1 = QLineEdit()
         self.ip_input_1.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
         self.ip_input_1.setObjectName("ipInput1")
+        ip_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ip_input_1.setValidator(ip_validator)
         form_layout.addRow(QLabel("Adresse IP:"), self.ip_input_1)
 
         self.mask_input_1 = QLineEdit()
         self.mask_input_1.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
         self.mask_input_1.setObjectName("maskInput1")
+        mask_regex = QRegExp(r"^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$")
+        mask_validator = QRegExpValidator(mask_regex)
+        self.mask_input_1.setValidator(mask_validator)
         form_layout.addRow(QLabel("Masque:"), self.mask_input_1)
 
         self.result_label_1 = QLabel()
@@ -102,16 +109,25 @@ class GuiClassFull(QWidget):
         self.ip_input_2 = QLineEdit()
         self.ip_input_2.setPlaceholderText("Entrer l'adresse IP")
         self.ip_input_2.setObjectName("ipInput2")
+        ip_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ip_input_2.setValidator(ip_validator)
         form_layout.addRow(QLabel("Adresse IP:"), self.ip_input_2)
 
         self.mask_input_2 = QLineEdit()
         self.mask_input_2.setPlaceholderText("Entrer le masque")
         self.mask_input_2.setObjectName("maskInput2")
+        mask_regex = QRegExp(r"^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$")
+        mask_validator = QRegExpValidator(mask_regex)
+        self.mask_input_2.setValidator(mask_validator)
         form_layout.addRow(QLabel("Masque:"), self.mask_input_2)
 
         self.network_input_2 = QLineEdit()
         self.network_input_2.setPlaceholderText("Entrer l'adresse réseau")
         self.network_input_2.setObjectName("networkInput2")
+        network_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        network_validator = QRegExpValidator(network_regex)
+        self.network_input_2.setValidator(network_validator)
         form_layout.addRow(QLabel("Adresse réseau:"), self.network_input_2)
 
         self.result_label_2 = QLabel()
@@ -139,11 +155,17 @@ class GuiClassFull(QWidget):
         self.ip_input_3 = QLineEdit()
         self.ip_input_3.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.1.0)")
         self.ip_input_3.setObjectName("ip_input_3")
+        ip_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ip_input_3.setValidator(ip_validator)
         form_layout.addRow(QLabel("Adresse IP :"), self.ip_input_3)
 
         self.subnet_input_3 = QLineEdit()
         self.subnet_input_3.setPlaceholderText("Entrer le nombre de sous-réseaux")
         self.subnet_input_3.setObjectName("subnet_input_3")
+        subnet_regex = QRegExp(r"^[1-9]\d*$")
+        subnet_validator = QRegExpValidator(subnet_regex)
+        self.subnet_input_3.setValidator(subnet_validator)
         form_layout.addRow(QLabel("Nombre de sous-réseaux:"), self.subnet_input_3)
 
         form_group.setLayout(form_layout)
@@ -193,16 +215,25 @@ class GuiClassFull(QWidget):
         self.ip_input_4 = QLineEdit()
         self.ip_input_4.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.1.0)")
         self.ip_input_4.setObjectName("ip_input_4")
+        ip_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ip_input_4.setValidator(ip_validator)
         form_layout.addRow(QLabel("Adresse IP :"), self.ip_input_4)
 
         self.mask_input_4 = QLineEdit()
         self.mask_input_4.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
         self.mask_input_4.setObjectName("mask_input_4")
+        mask_regex = QRegExp(r"^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$")
+        mask_validator = QRegExpValidator(mask_regex)
+        self.mask_input_4.setValidator(mask_validator)
         form_layout.addRow(QLabel("Masque:"), self.mask_input_4)
 
         self.host_input_4 = QLineEdit()
         self.host_input_4.setPlaceholderText("Entrer le nombre d'IP par sous-réseau")
         self.host_input_4.setObjectName("host_input_4")
+        host_regex = QRegExp(r"^[1-9]\d*$")
+        host_validator = QRegExpValidator(host_regex)
+        self.host_input_4.setValidator(host_validator)
         form_layout.addRow(QLabel("Nombre d'IP par sous-réseau:"), self.host_input_4)
 
         form_group.setLayout(form_layout)

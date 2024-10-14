@@ -1,7 +1,8 @@
 # gui_classless.py
 # Classe pour l'interface du classless
 from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton, QHBoxLayout, QApplication
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QRegExpValidator
+from PyQt5.QtCore import QRegExp
 from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
 
 class GuiClassLess(QWidget):
@@ -22,11 +23,17 @@ class GuiClassLess(QWidget):
         self.ip_input = QLineEdit()
         self.ip_input.setPlaceholderText("Entrer l'adresse IP (ex: 192.168.0.1)")
         self.ip_input.setObjectName("ip_input")
+        ip_regex = QRegExp(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        ip_validator = QRegExpValidator(ip_regex)
+        self.ip_input.setValidator(ip_validator)
 
         # Masque
         self.mask_input = QLineEdit()
-        self.mask_input.setPlaceholderText("Entrer le masque (ex:/24)")
+        self.mask_input.setPlaceholderText("Entrer le masque (ex: /24)")
         self.mask_input.setObjectName("mask_input")
+        mask_regex = QRegExp(r"^/(?:[1-9]|[12][0-9]|3[0-2])$")
+        mask_validator = QRegExpValidator(mask_regex)
+        self.mask_input.setValidator(mask_validator)
 
         # Labels pour Adresse IP et Masque avec objectName
         self.ip_label = QLabel('Adresse IP:')
@@ -86,11 +93,8 @@ class GuiClassLess(QWidget):
             return
 
         if not validate_mask(cidr_mask):
-            self.res_label.setText("Masque invalide. Format attendu : /xx (1-32) ou xxx.xxx.xxx.xxx")
+            self.res_label.setText("Masque invalide. Format attendu : /xx (1-32)")
             return
-
-        if not cidr_mask.startswith('/'):
-            cidr_mask = '/' + str(mask_to_cidr(cidr_mask))
 
         cidr_value = int(cidr_mask[1:])
         subnet_mask = cidr_to_mask(cidr_value)
