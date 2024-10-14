@@ -2,37 +2,58 @@
 # Classe pour l'enregistrement d'un nouveau user
 import sqlite3
 import bcrypt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QPushButton, QMessageBox, QLabel, QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
 
 class RegisterDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Enregistrement')
-        self.setFixedSize(300, 200)
+        self.setWindowState(Qt.WindowMaximized)
 
-        
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
-        
+        # Widget central pour contenir tous les éléments
+        central_widget = QWidget()
+        central_layout = QVBoxLayout()
+        central_widget.setLayout(central_layout)
+
+        # Formulaire
+        form_layout = QVBoxLayout()
+        form_layout.setContentsMargins(30, 30, 30, 30)
+        form_layout.setSpacing(10)
+
+        title_label = QLabel('Créer un compte')
+        title_label.setObjectName("title_label")
+        title_label.setFont(QFont('Arial', 24, QFont.Bold))
+        form_layout.addWidget(title_label, alignment=Qt.AlignCenter)
+
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText('Identifiant')
-        layout.addWidget(self.username_input)
+        self.username_input.setObjectName("username_input")
+        form_layout.addWidget(self.username_input, alignment=Qt.AlignCenter)
 
         self.password_input = QLineEdit()
         self.password_input.setPlaceholderText('Mot de passe')
         self.password_input.setEchoMode(QLineEdit.Password)
-        layout.addWidget(self.password_input)
+        self.password_input.setObjectName("password_input")
+        form_layout.addWidget(self.password_input, alignment=Qt.AlignCenter)
 
         self.confirm_password_input = QLineEdit()
         self.confirm_password_input.setPlaceholderText('Confirmer le mot de passe')
         self.confirm_password_input.setEchoMode(QLineEdit.Password)
-        layout.addWidget(self.confirm_password_input)
+        self.confirm_password_input.setObjectName("password_input")
+        form_layout.addWidget(self.confirm_password_input, alignment=Qt.AlignCenter)
 
         register_button = QPushButton('Enregistrer')
+        register_button.setObjectName("registerBtn")
         register_button.clicked.connect(self.handle_register)
-        layout.addWidget(register_button)
+        form_layout.addWidget(register_button, alignment=Qt.AlignCenter)
 
-        self.setLayout(layout)
+        central_layout.addLayout(form_layout)
+        main_layout.addWidget(central_widget, alignment=Qt.AlignCenter)
+        self.setLayout(main_layout)
 
     #Gestion du processus d'enregistrement quand on clique sur le bouton d'enregistrement
     def handle_register(self):

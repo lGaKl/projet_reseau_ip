@@ -48,6 +48,12 @@ QPushButton:pressed {
     background-color: #2574A9;
 }
 
+QPushButton#loginBtn, QPushButton#registerBtn {
+    font-size: 28px; /* Augmenter la taille de la police */
+    padding: 20px 40px; /* Augmenter le padding pour agrandir le bouton */
+    border-radius: 16px; /* Augmenter le rayon des bordures pour un effet plus arrondi */
+}
+
 /* Style pour les groupes */
 QGroupBox {
     border: 5px solid #3498DB;
@@ -173,4 +179,48 @@ QLabel#username_label, QLabel#password_label {
     font-size: 24px;
     color: #ECF0F1;
     margin-bottom: 10px;
+}
+
+/* Style pour les labels de login */
+QLabel#username_label, QLabel#password_label, QLabel#title_label {
+    font-size: 48px; /* Taille de la police encore plus grande */
+    color: #ECF0F1;
+    margin-bottom: 30px; /* Marge inférieure augmentée */
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Style pour les champs d'input de login */
+QLineEdit#username_input, QLineEdit#password_input {
+    background-color: #34495E;
+    color: #ECF0F1;
+    border: 4px solid #3498DB;
+    border-radius: 16px;
+    padding: 30px;
+    font-size: 36px;
+    margin-bottom: 35px;
+    min-width: 500px;
+    width: 80%;
+    max-width: 800px;
+}
+
+QLineEdit#username_input:focus, QLineEdit#password_input:focus {
+    border-color: #2980B9;
+}
+
+QPushButton#loginBtn, QPushButton#registerBtn {
+    font-size: 36px;
+    padding: 30px;
+    border-radius: 16px;
+    min-width: 500px;
+    width: 80%;
+    max-width: 800px;
+    margin-bottom: 35px;
+    background-color: #3498DB;
+    color: #ECF0F1;
+    border: none;
+}
+
+QPushButton#loginBtn:hover, QPushButton#registerBtn:hover {
+    background-color: #2980B9;
 }
