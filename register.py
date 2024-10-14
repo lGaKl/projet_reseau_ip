@@ -85,7 +85,7 @@ class RegisterDialog(QDialog):
                 return False
 
             # Hacher le mot de passe
-            hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+            hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt(16))
 
             # Insérer le nouvel utilisateur
             cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_pw))

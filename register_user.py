@@ -14,7 +14,7 @@ def register_user(username, password):
         return False
     
     # Hasher le mdp
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(16))
 
     # Insérer le nouveau user
     cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
