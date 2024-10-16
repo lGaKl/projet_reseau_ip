@@ -158,12 +158,12 @@ QToolButton:hover {
     border-radius: 10px;
 }
 
-#calculate_btn_1, #verify_btn_2, #calculate_btn_3, #calculate_btn_4 {
+#calculate_btn_1, #verify_btn_2, #calculate_btn_3, #calculate_btn_4, #calculateBtn, #resetBtn {
     background-color: #27AE60;
     font-size: 28px;
 }
 
-#calculate_btn_1:hover, #verify_btn_2:hover, #calculate_btn_3:hover, #calculate_btn_4:hover {
+#calculate_btn_1:hover, #verify_btn_2:hover, #calculate_btn_3:hover, #calculate_btn_4, #calculateBtn, #resetBtn:hover {
     background-color: #2ECC71;
 }
 
