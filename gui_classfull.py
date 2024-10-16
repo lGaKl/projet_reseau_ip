@@ -3,7 +3,7 @@
 from PyQt5.QtWidgets import (QWidget, QLabel, QFormLayout, QGroupBox, 
                              QLineEdit, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QApplication, QStackedWidget, 
-                             QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QSizePolicy, QDialog, QDialogButtonBox)
+                             QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QSizePolicy, QDialog, QDialogButtonBox, QMessageBox)
 from PyQt5.QtGui import QFont, QRegExpValidator
 from PyQt5.QtCore import QRegExp
 from utils import validate_ip, validate_mask, mask_to_cidr
@@ -345,6 +345,14 @@ class GuiClassFull(QWidget):
         self.host_input_4.setValidator(host_validator)
         form_layout.addRow(QLabel("Nombre d'IP par sous-réseau:"), self.host_input_4)
 
+        self.subnet_count_input_4 = QLineEdit()
+        self.subnet_count_input_4.setPlaceholderText("Entrer le nombre de sous-réseaux à afficher")
+        self.subnet_count_input_4.setObjectName("subnet_count_input_4")
+        subnet_count_regex = QRegExp(r"^[1-9]\d*$")
+        subnet_count_validator = QRegExpValidator(subnet_count_regex)
+        self.subnet_count_input_4.setValidator(subnet_count_validator)
+        form_layout.addRow(QLabel("Nombre de sous-réseaux à afficher:"), self.subnet_count_input_4)
+
         form_group.setLayout(form_layout)
         layout.addWidget(form_group)
 
@@ -423,7 +431,17 @@ class GuiClassFull(QWidget):
         ip = self.ip_input_4.text()
         try:
             hosts_per_subnet = int(self.host_input_4.text())
-            subnets = self.calculate_subnets_by_hosts(ip, hosts_per_subnet)
+            subnets_to_display = int(self.subnet_count_input_4.text())
+            
+            # Calculer le nombre maximum de sous-réseaux possibles
+            network = ipaddress.IPv4Network(ip + self.get_default_mask(ip), strict=False)
+            max_subnets = 2 ** (32 - network.prefixlen - math.ceil(math.log2(hosts_per_subnet + 2)))
+            
+            if subnets_to_display > max_subnets:
+                QMessageBox.warning(self, "Erreur", f"Le nombre de sous-réseaux demandé ({subnets_to_display}) dépasse le maximum possible ({max_subnets}).")
+                return
+            
+            subnets = self.calculate_subnets_by_hosts(ip, hosts_per_subnet, subnets_to_display)
 
             self.result_table_4.setRowCount(len(subnets))
             for i, subnet in enumerate(subnets):
@@ -444,7 +462,7 @@ class GuiClassFull(QWidget):
             self.result_table_4.setColumnCount(1)
             self.result_table_4.setItem(0, 0, QTableWidgetItem(f"Erreur inattendue : {e}"))
 
-    def calculate_subnets_by_hosts(self, ip_str, hosts_per_subnet):
+    def calculate_subnets_by_hosts(self, ip_str, hosts_per_subnet, subnets_to_display):
         # Ajouter un masque par défaut si nécessaire
         if '/' not in ip_str:
             ip_str += self.get_default_mask(ip_str)
@@ -465,12 +483,9 @@ class GuiClassFull(QWidget):
         pas = 2 ** (32 - new_prefix)
         pas_ip = ipaddress.IPv4Address(pas)
 
-        # Calculer le nombre de sous-réseaux possibles
-        num_subnets = 2 ** (new_prefix - network.prefixlen)
-
         # Calculer et afficher les sous-réseaux
         subnets_info = []
-        for i in range(num_subnets):
+        for i in range(subnets_to_display):
             subnet_address = new_network.network_address + (i * pas)
             subnet = ipaddress.IPv4Network(f"{subnet_address}/{new_prefix}", strict=False)
             
@@ -498,9 +513,6 @@ class GuiClassFull(QWidget):
         arr_network = [arr_address[i] & arr_mask[i] for i in range(4)]
         return arr_network
 
-
-    # def get_broadcast_address(self, arr_address, arr_mask):        arr_broadcast_address = [arr_address[i] | (arr_mask[i] ^ 255) for i in range(4)]
-    #     return arr_broadcast_address
 
     def is_in_network(self, ip_address, mask_address, network_address):
         network_address_int = self.address_to_int(network_address)
