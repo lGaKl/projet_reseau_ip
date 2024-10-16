@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QWidget, QLabel, QFormLayout, QGroupBox,
                              QPushButton, QApplication, QStackedWidget, 
                              QTableWidget, QTableWidgetItem, QComboBox, QHeaderView, QSizePolicy, QDialog, QDialogButtonBox, QMessageBox)
 from PyQt5.QtGui import QFont, QRegExpValidator
-from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QRegExp, Qt
 from utils import validate_ip, validate_mask, mask_to_cidr
 import sys
 import ipaddress
@@ -212,10 +212,13 @@ class GuiClassFull(QWidget):
             for i in range(num_subnets):
                 dialog = QDialog(self)
                 dialog.setWindowTitle(f"Nombre d'IP pour le sous-réseau {i+1}")
+                dialog.setMinimumWidth(800)  # Augmenter la largeur minimale
+                dialog.setMinimumHeight(300)  # Augmenter la hauteur minimale
                 layout = QVBoxLayout()
 
                 ip_input = QLineEdit()
                 ip_input.setPlaceholderText(f"Entrer le nombre d'IP pour le sous-réseau {i+1}")
+                ip_input.setMinimumWidth(300)  # Augmenter la largeur minimale du champ de saisie
                 layout.addWidget(ip_input)
 
                 button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
