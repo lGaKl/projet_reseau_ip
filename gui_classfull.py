@@ -220,14 +220,6 @@ class GuiClassFull(QWidget):
         self.ip_input_4.setValidator(ip_validator)
         form_layout.addRow(QLabel("Adresse IP :"), self.ip_input_4)
 
-        self.mask_input_4 = QLineEdit()
-        self.mask_input_4.setPlaceholderText("Entrer le masque (ex: 255.255.255.0)")
-        self.mask_input_4.setObjectName("mask_input_4")
-        mask_regex = QRegExp(r"^(((255\.){3}(255|254|252|248|240|224|192|128|0+))|((255\.){2}(255|254|252|248|240|224|192|128|0+)\.0)|((255\.)(255|254|252|248|240|224|192|128|0+)(\.0+){2})|((255|254|252|248|240|224|192|128|0+)(\.0+){3}))$")
-        mask_validator = QRegExpValidator(mask_regex)
-        self.mask_input_4.setValidator(mask_validator)
-        form_layout.addRow(QLabel("Masque:"), self.mask_input_4)
-
         self.host_input_4 = QLineEdit()
         self.host_input_4.setPlaceholderText("Entrer le nombre d'IP par sous-réseau")
         self.host_input_4.setObjectName("host_input_4")
@@ -323,7 +315,7 @@ class GuiClassFull(QWidget):
                 self.result_table.setItem(i, 2, QTableWidgetItem(subnet['adresse_de_broadcast']))
                 self.result_table.setItem(i, 3, QTableWidgetItem(subnet['1ère_ip']))
                 self.result_table.setItem(i, 4, QTableWidgetItem(subnet['dernière_ip']))
-                self.result_table.setItem(i, 5, QTableWidgetItem(str(subnet['pas'])))
+                self.result_table.setItem(i, 5, QTableWidgetItem(subnet['pas']))
                 self.result_table.setItem(i, 6, QTableWidgetItem(str(subnet['nombre_d_hôtes'])))  # Nouvelle colonne
 
         except ValueError as e:
@@ -333,10 +325,9 @@ class GuiClassFull(QWidget):
 
     def calculate_subnets_interface_4(self):
         ip = self.ip_input_4.text()
-        mask = self.mask_input_4.text()
         try:
             hosts_per_subnet = int(self.host_input_4.text())
-            subnets = self.calculate_subnets_by_hosts(ip, mask, hosts_per_subnet)
+            subnets = self.calculate_subnets_by_hosts(ip, hosts_per_subnet)
 
             self.result_table_4.setRowCount(len(subnets))
             for i, subnet in enumerate(subnets):
@@ -345,35 +336,47 @@ class GuiClassFull(QWidget):
                 self.result_table_4.setItem(i, 2, QTableWidgetItem(subnet['adresse_de_broadcast']))
                 self.result_table_4.setItem(i, 3, QTableWidgetItem(subnet['1ère_ip']))
                 self.result_table_4.setItem(i, 4, QTableWidgetItem(subnet['dernière_ip']))
-                self.result_table_4.setItem(i, 5, QTableWidgetItem(str(subnet['pas'])))
+                self.result_table_4.setItem(i, 5, QTableWidgetItem(subnet['pas']))
                 self.result_table_4.setItem(i, 6, QTableWidgetItem(str(subnet['nombre_d_hôtes'])))
 
         except ValueError as e:
-            self.result_table_4.setRowCount(1)
+            self.result_table_4.setRowCount(0)
             self.result_table_4.setColumnCount(1)
             self.result_table_4.setItem(0, 0, QTableWidgetItem(f"Erreur : {e}"))
 
-    def calculate_subnets_by_hosts(self, ip_str, mask_str, hosts_per_subnet):
-        network = ipaddress.IPv4Network(f"{ip_str}/{mask_str}", strict=False)
-        
+    def calculate_subnets_by_hosts(self, ip_str, hosts_per_subnet):
+        # Ajouter un masque par défaut si nécessaire
+        if '/' not in ip_str:
+            ip_str += self.get_default_mask(ip_str)
+
+        # Convertir l'adresse IP en objet IPv4Network
+        network = ipaddress.IPv4Network(ip_str, strict=False)
+
         # Calculer le nombre de bits nécessaires pour les hôtes
         host_bits = math.ceil(math.log2(hosts_per_subnet + 2))  # +2 pour l'adresse réseau et de broadcast
         
         # Nouvelle longueur de masque
-        new_prefix = min(32, 32 - host_bits)
-        new_network = ipaddress.IPv4Network(f"{network.network_address}/{new_prefix}", strict=False)
+        new_prefix = min(32, network.prefixlen + (32 - network.prefixlen - host_bits))
         
+        # Créer le nouveau réseau avec le nouveau préfixe
+        new_network = ipaddress.IPv4Network(f"{network.network_address}/{new_prefix}", strict=False)
+
         # Calculer le pas
         pas = 2 ** (32 - new_prefix)
         pas_ip = ipaddress.IPv4Address(pas)
-        
+
         # Calculer le nombre de sous-réseaux possibles
         num_subnets = 2 ** (new_prefix - network.prefixlen)
-        
+
+        # Calculer et afficher les sous-réseaux
         subnets_info = []
         for i in range(num_subnets):
             subnet_address = new_network.network_address + (i * pas)
             subnet = ipaddress.IPv4Network(f"{subnet_address}/{new_prefix}", strict=False)
+            
+            # Déterminer sur quel octet le pas s'applique
+            pas_octet = 4 - (32 - new_prefix) // 8
+            pas_value = pas_ip.packed[pas_octet - 1]
             
             subnets_info.append({
                 "numéro_du_sous_réseau": i + 1,
@@ -381,7 +384,7 @@ class GuiClassFull(QWidget):
                 "adresse_de_broadcast": str(subnet.broadcast_address),
                 "1ère_ip": str(subnet.network_address + 1),
                 "dernière_ip": str(subnet.broadcast_address - 1),
-                "pas": str(pas_ip),
+                "pas": f"{pas_value} sur le {pas_octet}ème octet",
                 "nombre_d_hôtes": subnet.num_addresses - 2
             })
 
@@ -448,13 +451,17 @@ class GuiClassFull(QWidget):
             subnet_address = new_network.network_address + (i * pas)
             subnet = ipaddress.IPv4Network(f"{subnet_address}/{new_prefix}", strict=False)
             
+            # Déterminer sur quel octet le pas s'applique
+            pas_octet = 4 - (32 - new_prefix) // 8
+            pas_value = pas_ip.packed[pas_octet - 1]
+            
             subnets_info.append({
                 "numéro_du_sous_réseau": i + 1,
                 "adresse_de_sous_réseau": str(subnet.network_address),
                 "adresse_de_broadcast": str(subnet.broadcast_address),
                 "1ère_ip": str(subnet.network_address + 1),
                 "dernière_ip": str(subnet.broadcast_address - 1),
-                "pas": str(pas_ip),  # Utiliser la notation d'adresse IP pour le pas
+                "pas": f"{pas_value} sur le {pas_octet}ème octet",
                 "nombre_d_hôtes": subnet.num_addresses - 2  # Exclure l'adresse réseau et de broadcast
             })
 

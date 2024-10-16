@@ -120,7 +120,3 @@ class GuiClassLess(QWidget):
         broadcast_address = '.'.join([str(int(broadcast_bin[i:i+8], 2)) for i in range(0, 32, 8)])
 
         return network_address, broadcast_address
-
-
-
-
