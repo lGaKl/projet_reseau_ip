@@ -41,15 +41,3 @@ def cidr_to_mask(cidr):
 def validate_cidr(cidr):
     cidr_pattern = r'^(\d{1,3}\.){3}\d{1,3}/([1-9]|[12][0-9]|3[0-2])$'
     return bool(re.match(cidr_pattern, cidr))
-
-def validate_subnet_count(count):
-    return bool(re.match(r'^[1-9]\d*$', count))
-
-def validate_host_count(count):
-    return bool(re.match(r'^[1-9]\d*$', count))
-
-def validate_username(username):
-    return bool(re.match(r'^[a-zA-Z0-9_]{3,20}$', username))
-
-def validate_password(password):
-    return bool(re.match(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', password))

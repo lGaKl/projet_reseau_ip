@@ -404,24 +404,21 @@ class GuiClassFull(QWidget):
             self.result_label_1.setText("Masque invalide. Format attendu : xxx.xxx.xxx.xxx")
             return
 
-        ip_address = list(map(int, ip.split('.')))
-        mask_address = list(map(int, mask.split('.')))
-
-        network_address = self.get_network_address(ip_address, mask_address)
-        broadcast_address = self.get_broadcast_address(network_address, mask_address)
-
-        self.result_label_1.setText(f"Adresse réseau: {self.address_to_string(network_address)}\nAdresse broadcast: {self.address_to_string(broadcast_address)}")
+        try:
+            network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
+            network_address = str(network.network_address)
+            broadcast_address = str(network.broadcast_address)
+            self.result_label_1.setText(f"Adresse réseau: {network_address}\nAdresse broadcast: {broadcast_address}")
+        except ValueError as e:
+            self.result_label_1.setText(f"Erreur : {str(e)}")
     
     def verify_interface_2(self):
         try:
-            ip_address = list(map(int, self.ip_input_2.text().split(".")))
-            mask_address = list(map(int, self.mask_input_2.text().split(".")))
-            network_address = list(map(int, self.network_input_2.text().split(".")))
+            ip_address = ipaddress.IPv4Address(self.ip_input_2.text())
+            mask = self.mask_input_2.text()
+            network_address = ipaddress.IPv4Network(f"{self.network_input_2.text()}/{mask}", strict=False)
 
-            if len(ip_address) != 4 or len(mask_address) != 4 or len(network_address) != 4:
-                raise ValueError("Les adresses IP doivent avoir 4 octets.")
-
-            if self.is_in_network(ip_address, mask_address, network_address):
+            if ip_address in network_address:
                 self.result_label_2.setText("L'adresse IP appartient au réseau.")
             else:
                 self.result_label_2.setText("L'adresse IP n'appartient pas au réseau.")
@@ -507,21 +504,3 @@ class GuiClassFull(QWidget):
             })
 
         return subnets_info
-
-    def address_to_string(self, arr_address):
-        return '.'.join(map(str, arr_address))
-
-
-    def get_network_address(self, arr_address, arr_mask):
-        arr_network = [arr_address[i] & arr_mask[i] for i in range(4)]
-        return arr_network
-
-
-    def is_in_network(self, ip_address, mask_address, network_address):
-        network_address_int = self.address_to_int(network_address)
-        ip_address_int = self.address_to_int(ip_address)
-        mask_address_int = self.address_to_int(mask_address)
-        return (ip_address_int & mask_address_int) == network_address_int
-    
-    def address_to_int(self, address):
-        return int.from_bytes(bytes(address), byteorder='big')
