@@ -205,6 +205,10 @@ class GuiClassFull(QWidget):
         self.interface_3.setLayout(layout)
 
     def open_ip_input_dialogs(self):
+        if self.ip_input_3.text().startswith("127"):
+            QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
+            return
+
         try:
             num_subnets = int(self.subnet_input_3.text())
             ip_per_subnet = []
@@ -396,6 +400,10 @@ class GuiClassFull(QWidget):
         ip = self.ip_input_1.text()
         mask = self.mask_input_1.text()
 
+        if ip.startswith("127"):
+            QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
+            return
+
         if not validate_ip(ip):
             self.result_label_1.setText("Adresse IP invalide. Format attendu : xxx.xxx.xxx.xxx (0-255 pour chaque octet)")
             return
@@ -413,6 +421,10 @@ class GuiClassFull(QWidget):
             self.result_label_1.setText(f"Erreur : {str(e)}")
     
     def verify_interface_2(self):
+        if self.ip_input_2.text().startswith("127"):
+            QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
+            return
+
         try:
             ip_address = ipaddress.IPv4Address(self.ip_input_2.text())
             mask = self.mask_input_2.text()
@@ -428,6 +440,10 @@ class GuiClassFull(QWidget):
             self.result_label_2.setText(f"Une erreur inattendue s'est produite : {str(e)}")
 
     def calculate_subnets_interface_4(self):
+        if self.ip_input_4.text().startswith("127"):
+            QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
+            return
+
         ip = self.ip_input_4.text()
         try:
             hosts_per_subnet = int(self.host_input_4.text())

@@ -5,11 +5,8 @@ import ipaddress
 
 # Validation de l'adresse IP
 def validate_ip(ip):
-    ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
-    if not re.match(ip_pattern, ip):
-        return False
-    octets = ip.split('.')
-    return all(0 <= int(octet) <= 255 for octet in octets) and len(octets) == 4
+    ip_pattern = r'^(?!127\.)(?!(22[4-9]|2[3-5][0-9]))(?:(?:1[0-9]{2}|2[0-1][0-9]|22[0-3]|[1-9]?[0-9])\.){3}(?:1[0-9]{2}|2[0-1][0-9]|22[0-3]|[1-9]?[0-9])$'
+    return bool(re.match(ip_pattern, ip))
 
 # Validation du masque (notation CIDR ou décimale)
 def validate_mask(mask):
