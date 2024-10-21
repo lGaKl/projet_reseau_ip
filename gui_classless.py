@@ -1,6 +1,6 @@
 # gui_classless.py
 # Classe pour l'interface du classless
-from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton, QHBoxLayout, QApplication
+from PyQt5.QtWidgets import QWidget, QLabel, QFormLayout, QGroupBox, QLineEdit, QVBoxLayout, QPushButton, QHBoxLayout, QApplication, QMessageBox
 from PyQt5.QtGui import QFont, QRegExpValidator
 from PyQt5.QtCore import QRegExp
 from utils import validate_ip, validate_mask, mask_to_cidr, cidr_to_mask
@@ -31,7 +31,7 @@ class GuiClassLess(QWidget):
         self.mask_input = QLineEdit()
         self.mask_input.setPlaceholderText("Entrer le masque (ex: /24)")
         self.mask_input.setObjectName("mask_input")
-        mask_regex = QRegExp(r"^/(?:[1-9]|[12][0-9]|3[0-2])$")
+        mask_regex = QRegExp(r"^/(?:[1-9]|[12][0-9]|3[0-1])$")
         mask_validator = QRegExpValidator(mask_regex)
         self.mask_input.setValidator(mask_validator)
 
@@ -93,10 +93,14 @@ class GuiClassLess(QWidget):
             return
 
         if not validate_mask(cidr_mask):
-            self.res_label.setText("Masque invalide. Format attendu : /xx (1-32)")
+            self.res_label.setText("Masque invalide. Format attendu : /xx (1-31)")
             return
 
         cidr_value = int(cidr_mask[1:])
+        if cidr_value == 32:
+            QMessageBox.critical(self, "Erreur", "Le masque /32 n'est pas valide pour ce calcul.")
+            return
+
         subnet_mask = cidr_to_mask(cidr_value)
 
         network_address, broadcast_address = self.calculate_subnet(ip, subnet_mask)

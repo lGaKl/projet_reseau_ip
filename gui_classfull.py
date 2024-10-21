@@ -412,6 +412,10 @@ class GuiClassFull(QWidget):
             self.result_label_1.setText("Masque invalide. Format attendu : xxx.xxx.xxx.xxx")
             return
 
+        if mask == "255.255.255.255":
+            QMessageBox.warning(self, "Erreur", "Non valide")
+            return
+
         try:
             network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
             network_address = str(network.network_address)
@@ -425,12 +429,20 @@ class GuiClassFull(QWidget):
             QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
             return
 
+        if self.mask_input_2.text() == "255.255.255.255":
+            QMessageBox.warning(self, "Erreur", "Non valide")
+            return
+
         try:
             ip_address = ipaddress.IPv4Address(self.ip_input_2.text())
             mask = self.mask_input_2.text()
-            network_address = ipaddress.IPv4Network(f"{self.network_input_2.text()}/{mask}", strict=False)
-
-            if ip_address in network_address:
+            network_address = self.network_input_2.text()
+            
+            # Calculer l'adresse réseau à partir de l'IP et du masque entrés
+            calculated_network = ipaddress.IPv4Network(f"{ip_address}/{mask}", strict=False)
+            
+            # Vérifier si l'adresse réseau calculée correspond à celle entrée par l'utilisateur
+            if str(calculated_network.network_address) == network_address:
                 self.result_label_2.setText("L'adresse IP appartient au réseau.")
             else:
                 self.result_label_2.setText("L'adresse IP n'appartient pas au réseau.")
@@ -451,10 +463,14 @@ class GuiClassFull(QWidget):
             
             # Calculer le nombre maximum de sous-réseaux possibles
             network = ipaddress.IPv4Network(ip + self.get_default_mask(ip), strict=False)
-            max_subnets = 2 ** (32 - network.prefixlen - math.ceil(math.log2(hosts_per_subnet + 2)))
+            max_subnets = (2 ** (32 - network.prefixlen - math.ceil(math.log2(hosts_per_subnet + 2)))-1)
             
             if subnets_to_display > max_subnets:
                 QMessageBox.warning(self, "Erreur", f"Le nombre de sous-réseaux demandé ({subnets_to_display}) dépasse le maximum possible ({max_subnets}).")
+                return
+            
+            if network.prefixlen == 32:
+                QMessageBox.warning(self, "Erreur", "Non valide")
                 return
             
             subnets = self.calculate_subnets_by_hosts(ip, hosts_per_subnet, subnets_to_display)
