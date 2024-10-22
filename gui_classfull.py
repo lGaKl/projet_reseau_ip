@@ -17,6 +17,7 @@ class GuiClassFull(QWidget):
         self.main_window = main_window
         self.initUI()
 
+    # Initialise l'interface utilisateur principale
     def initUI(self):
         main_layout = QVBoxLayout()
         self.stacked_widget = QStackedWidget()
@@ -60,6 +61,7 @@ class GuiClassFull(QWidget):
 
         self.setLayout(main_layout)
 
+    # Crée l'interface pour vérifier le masque et calculer les adresses réseau/broadcast
     def create_interface_1(self):
         self.interface_1 = QWidget()
         layout = QVBoxLayout()
@@ -98,6 +100,7 @@ class GuiClassFull(QWidget):
 
         self.interface_1.setLayout(layout)
 
+    # Crée l'interface pour vérifier l'appartenance d'une IP à un réseau
     def create_interface_2(self):
         self.interface_2 = QWidget()
         layout = QVBoxLayout()
@@ -144,6 +147,7 @@ class GuiClassFull(QWidget):
 
         self.interface_2.setLayout(layout)
 
+    # Crée l'interface pour découper un réseau en sous-réseaux
     def create_interface_3(self):
         self.interface_3 = QWidget()
         layout = QVBoxLayout()
@@ -204,6 +208,7 @@ class GuiClassFull(QWidget):
 
         self.interface_3.setLayout(layout)
 
+    # Ouvre des boîtes de dialogue pour saisir le nombre d'IP par sous-réseau
     def open_ip_input_dialogs(self):
         if self.ip_input_3.text().startswith("127"):
             QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
@@ -247,7 +252,21 @@ class GuiClassFull(QWidget):
             self.result_table.setColumnCount(1)
             self.result_table.setItem(0, 0, QTableWidgetItem(f"Erreur : {e}"))
 
+    # Calcule les sous-réseaux et affiche les résultats dans le tableau
     def calculate_subnets_interface_3(self, ip_per_subnet):
+        """
+        Cette méthode calcule les sous-réseaux et affiche les résultats dans le tableau de l'interface.
+        
+        Fonctionnement :
+        1. Récupère l'adresse IP saisie par l'utilisateur.
+        2. Appelle la méthode calculate_subnets pour obtenir les informations des sous-réseaux.
+        3. Configure le tableau de résultats avec le nombre de lignes correspondant aux sous-réseaux.
+        4. Pour chaque sous-réseau, remplit une ligne du tableau avec les informations calculées.
+        5. En cas d'erreur, affiche un message d'erreur dans le tableau.
+        
+        Paramètres :
+        - ip_per_subnet : Liste contenant le nombre d'IP demandé pour chaque sous-réseau.
+        """
         ip = self.ip_input_3.text()
         try:
             subnets = self.calculate_subnets(ip, ip_per_subnet)
@@ -271,7 +290,23 @@ class GuiClassFull(QWidget):
             self.result_table.setColumnCount(1)
             self.result_table.setItem(0, 0, QTableWidgetItem(f"Erreur inattendue : {e}"))
 
+    # Calcule les informations des sous-réseaux
     def calculate_subnets(self, ip_str, ip_per_subnet):
+        """
+        Cette méthode calcule les informations des sous-réseaux à partir d'une adresse IP et d'une liste de nombres d'IP par sous-réseau.
+        
+        Fonctionnement :
+        1. Ajoute un masque par défaut à l'adresse IP si nécessaire.
+        2. Convertit l'adresse IP en objet IPv4Network.
+        3. Pour chaque nombre d'IP demandé :
+           - Calcule le nombre de bits nécessaires pour les hôtes.
+           - Détermine le nouveau préfixe du sous-réseau.
+           - Crée le sous-réseau.
+           - Calcule le pas et détermine sur quel octet il s'applique.
+           - Ajoute les informations du sous-réseau à la liste des résultats.
+           - Passe à l'adresse IP suivante pour le prochain sous-réseau.
+        4. Retourne la liste des informations de tous les sous-réseaux.
+        """
         # Ajouter un masque par défaut si nécessaire
         if '/' not in ip_str:
             ip_str += self.get_default_mask(ip_str)
@@ -315,6 +350,7 @@ class GuiClassFull(QWidget):
 
         return subnets_info
 
+    # Détermine le masque par défaut en fonction de la classe de l'adresse IP
     def get_default_mask(self, ip_str):
         """Détermine le masque par défaut en fonction de la classe de l'adresse IP."""
         first_octet = int(ip_str.split('.')[0])
@@ -328,6 +364,7 @@ class GuiClassFull(QWidget):
         else:
             raise ValueError("Adresse IP non valide. Elle doit être de classe A, B ou C.")
 
+    # Crée l'interface pour découper un réseau en IP
     def create_interface_4(self):
         self.interface_4 = QWidget()
         layout = QVBoxLayout()
@@ -396,7 +433,21 @@ class GuiClassFull(QWidget):
 
         self.interface_4.setLayout(layout)
 
+    # Calcule le masque et les adresses réseau/broadcast pour l'interface 1
     def calculate_interface_1(self):
+        """
+        Cette méthode calcule l'adresse réseau et l'adresse de broadcast pour une adresse IP et un masque donnés.
+
+        Fonctionnement :
+        1. Récupère l'adresse IP et le masque entrés par l'utilisateur.
+        2. Vérifie si l'adresse IP n'est pas une adresse de loopback (127.x.x.x).
+        3. Valide le format de l'adresse IP et du masque.
+        4. Vérifie que le masque n'est pas 255.255.255.255 (non valide).
+        5. Calcule l'adresse réseau et l'adresse de broadcast.
+        6. Affiche les résultats ou un message d'erreur en cas de problème.
+
+        Les résultats sont affichés dans un QLabel (self.result_label_1).
+        """
         ip = self.ip_input_1.text()
         mask = self.mask_input_1.text()
 
@@ -424,7 +475,22 @@ class GuiClassFull(QWidget):
         except ValueError as e:
             self.result_label_1.setText(f"Erreur : {str(e)}")
     
+    # Vérifie l'appartenance d'une IP à un réseau pour l'interface 2
     def verify_interface_2(self):
+        """
+        Cette méthode vérifie si une adresse IP appartient à un réseau spécifié.
+
+        Fonctionnement :
+        1. Vérifie si l'adresse IP n'est pas une adresse de loopback (127.x.x.x).
+        2. Vérifie si le masque n'est pas 255.255.255.255 (non valide).
+        3. Récupère l'adresse IP, le masque et l'adresse réseau entrés par l'utilisateur.
+        4. Calcule l'adresse réseau à partir de l'IP et du masque fournis.
+        5. Compare l'adresse réseau calculée avec celle entrée par l'utilisateur.
+        6. Affiche le résultat de la vérification.
+        7. Gère les erreurs potentielles (ValueError et autres exceptions).
+
+        Le résultat est affiché dans un QLabel (self.result_label_2).
+        """
         if self.ip_input_2.text().startswith("127"):
             QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
             return
@@ -451,7 +517,30 @@ class GuiClassFull(QWidget):
         except Exception as e:
             self.result_label_2.setText(f"Une erreur inattendue s'est produite : {str(e)}")
 
+    # Calcule les sous-réseaux pour l'interface 4
     def calculate_subnets_interface_4(self):
+        """
+        Cette méthode calcule et affiche les sous-réseaux pour l'interface 4.
+
+        Fonctionnement :
+        1. Vérifie si l'adresse IP n'est pas une adresse de loopback (127.x.x.x).
+        2. Récupère l'adresse IP, le nombre d'hôtes par sous-réseau et le nombre de sous-réseaux à afficher.
+        3. Calcule le nombre maximum de sous-réseaux possibles.
+        4. Vérifie si le nombre de sous-réseaux demandé ne dépasse pas le maximum possible.
+        5. Vérifie si le masque n'est pas /32 (non valide pour le sous-réseautage).
+        6. Calcule les sous-réseaux en appelant la méthode calculate_subnets_by_hosts.
+        7. Affiche les résultats dans un tableau (QTableWidget).
+        8. Gère les erreurs potentielles (ValueError et autres exceptions).
+
+        Les résultats affichés pour chaque sous-réseau comprennent :
+        - Numéro du sous-réseau
+        - Adresse de sous-réseau
+        - Adresse de broadcast
+        - Première IP utilisable
+        - Dernière IP utilisable
+        - Pas entre les sous-réseaux
+        - Nombre d'hôtes disponibles
+        """
         if self.ip_input_4.text().startswith("127"):
             QMessageBox.warning(self, "Erreur", "Adresse IP invalide")
             return
@@ -494,7 +583,29 @@ class GuiClassFull(QWidget):
             self.result_table_4.setColumnCount(1)
             self.result_table_4.setItem(0, 0, QTableWidgetItem(f"Erreur inattendue : {e}"))
 
+    # Calcule les sous-réseaux en fonction du nombre d'hôtes par sous-réseau
     def calculate_subnets_by_hosts(self, ip_str, hosts_per_subnet, subnets_to_display):
+        """
+        Cette méthode calcule les sous-réseaux en fonction du nombre d'hôtes par sous-réseau.
+
+        Fonctionnement :
+        1. Ajoute un masque par défaut à l'adresse IP si nécessaire.
+        2. Convertit l'adresse IP en objet IPv4Network.
+        3. Calcule le nombre de bits nécessaires pour les hôtes.
+        4. Détermine la nouvelle longueur de masque.
+        5. Crée un nouveau réseau avec le nouveau préfixe.
+        6. Calcule le pas entre les sous-réseaux.
+        7. Génère les informations pour chaque sous-réseau demandé.
+
+        Paramètres :
+        - ip_str : L'adresse IP du réseau (string)
+        - hosts_per_subnet : Nombre d'hôtes souhaités par sous-réseau (int)
+        - subnets_to_display : Nombre de sous-réseaux à afficher (int)
+
+        Retourne :
+        Une liste de dictionnaires contenant les informations de chaque sous-réseau.
+        """
+
         # Ajouter un masque par défaut si nécessaire
         if '/' not in ip_str:
             ip_str += self.get_default_mask(ip_str)

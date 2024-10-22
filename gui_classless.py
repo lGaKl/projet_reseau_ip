@@ -85,6 +85,18 @@ class GuiClassLess(QWidget):
         self.main_window.showClassFullWidget()
 
     def calculate(self):
+        """
+        Cette méthode calcule l'adresse réseau et l'adresse de broadcast à partir d'une adresse IP et d'un masque CIDR.
+
+        Fonctionnement :
+        1. Récupère l'adresse IP et le masque CIDR saisis par l'utilisateur.
+        2. Valide le format de l'adresse IP et du masque.
+        3. Convertit le masque CIDR en masque de sous-réseau décimal.
+        4. Calcule l'adresse réseau et l'adresse de broadcast.
+        5. Affiche les résultats dans l'interface.
+
+        En cas d'erreur de saisie ou de masque invalide, affiche un message d'erreur approprié.
+        """
         ip = self.ip_input.text()
         cidr_mask = self.mask_input.text()
 
@@ -107,6 +119,24 @@ class GuiClassLess(QWidget):
 
         self.res_label.setText(f"Adresse réseau : {network_address}\nAdresse de broadcast : {broadcast_address}")
 
+
+    """
+        Cette méthode calcule l'adresse réseau et l'adresse de broadcast à partir d'une adresse IP et d'un masque de sous-réseau.
+
+        Fonctionnement :
+        1. Conversion de l'adresse IP et du masque en format binaire.
+        2. Calcul de l'adresse réseau en effectuant un AND logique entre l'IP et le masque.
+        3. Calcul de l'adresse de broadcast en effectuant un OR entre l'adresse réseau et l'inverse du masque.
+        4. Conversion des adresses binaires obtenues en format décimal.
+        5. Retour des adresses réseau et de broadcast calculées.
+
+        Paramètres :
+        - ip : L'adresse IP en format décimal (ex: "192.168.1.1")
+        - mask : Le masque de sous-réseau en format décimal (ex: "255.255.255.0")
+
+        Retourne :
+        Un tuple contenant l'adresse réseau et l'adresse de broadcast en format décimal.
+        """
     # Fonction pour calculer l'adresse réseau et l'adresse de broadcast
     def calculate_subnet(self, ip, mask):
         # Convertir IP et masque en binaire
